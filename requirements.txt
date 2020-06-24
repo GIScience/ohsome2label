@@ -1,0 +1,9 @@
+numpy==1.17.3
+gevent==1.4.0
+click==7.0
+pykwalify==1.7.0
+shapely==1.6.4
+tqdm==4.38.0
+Pillow==6.2.1
+requests==2.22.0
+geojson==2.5.0

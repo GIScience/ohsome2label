@@ -1,0 +1,3 @@
+include requirements.txt
+include ohsome2label/readme.md
+include ohsome2label/polygon-features.json

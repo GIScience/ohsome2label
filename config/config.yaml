@@ -1,0 +1,23 @@
+project:
+  name: HD_landuse
+  workspace: ./example_result
+  project_time: 2020-05-18
+  task: segmentation
+
+osm:
+  api: ohsome
+  url: https://api.ohsome.org/v1/elements/geometry
+  bboxes: [8.625,49.3711,8.7334,49.4397]
+  tags:
+    - {'label': 'urban', 'key': 'landuse', 'value': 'residential'}
+    - {'label': 'urban', 'key': 'landuse', 'value': 'garages'}
+    - {'label': 'industry', 'key': 'landuse', 'value': 'railway'}
+    - {'label': 'industry', 'key': 'landuse', 'value': 'industrial'}
+
+  timestamp: 2019-10-20
+  types: polygon
+
+image:
+  img_api: google
+  api_token : ''
+  zoom: 14

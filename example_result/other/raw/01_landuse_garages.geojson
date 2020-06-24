@@ -1,0 +1,9 @@
+{
+  "attribution" : {
+    "url" : "https://ohsome.org/copyrights",
+    "text" : "© OpenStreetMap contributors"
+  },
+  "apiVersion" : "0.9",
+  "type" : "FeatureCollection",
+  "features" : []
+}

@@ -1,0 +1,82 @@
+type: map
+mapping:
+  project:
+    required: True
+    type: map
+    mapping:
+      name:
+        type: text
+        required: True
+      workspace:
+        type: text
+        required: True
+      project_time :
+        type: date
+        format: '%Y-%m-%d'
+        required: True
+      task:
+        type: str
+        enum: ['object detection', 'segmentation']
+        required: True
+
+  osm:
+    type: map
+    mapping:
+      api:
+        type: text
+        required: True
+      url:
+        type: text
+        required: True
+      bboxes:
+        type: seq
+        sequence:
+          - type: float
+        range:
+          max: 4
+          min: 4
+        required: True
+      tags:
+        type: seq
+        sequence:
+          - type: map
+            mapping:
+              label:
+                type: text
+                required: True
+              key:
+                type: text
+                required: True
+              value:
+                type: text
+                required: False
+      timestamp :
+        type: date
+        format: '%Y-%m-%d'
+        required: True
+      types:
+        type: str
+        enum: ['polygon','line']
+        required: True
+      properties:
+        type: seq
+        sequence:
+          - type: str
+            enum: ['tags', 'metadata', 'unclipped']
+            unique: True
+
+
+  image:
+    required: True
+    type: map
+    mapping:
+      img_api:
+        type: str
+        enum: ['google', 'sentinel', 'mapbox', 'bing']
+        required: True
+      api_token:
+        type: text
+        required: True
+      zoom:
+        type: int
+        required: True
