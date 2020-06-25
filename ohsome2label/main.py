@@ -39,7 +39,7 @@ def cli(ctx, verbose, config, schema):
     ctx.obj = cfg
 
 
-@cli.command(help="download vector OSM data from ohsomeAPI")
+@cli.command(help="Download vector OSM data from ohsomeAPI")
 @click.pass_obj
 def vector(config):
     print(
