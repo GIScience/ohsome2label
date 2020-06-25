@@ -72,7 +72,10 @@ mapping:
     mapping:
       img_api:
         type: str
-        enum: ['google', 'sentinel', 'mapbox', 'bing']
+        enum: ['sentinel', 'mapbox', 'bing', 'custom']
+        required: True
+      img_url:
+        type: str
         required: True
       api_token:
         type: text

@@ -16,7 +16,7 @@ with io.open('ohsome2label/readme.md') as f:
 
 setup(
     name='ohsome2label',
-    version='1.0.0',
+    version='1.0.1',
     packages=find_packages(),
     author='Zhaoyan Wu, Hao Li',
     author_email='zhaoyan_wu@whu.edu.cn, hao.li@uni-heidelberg.de',

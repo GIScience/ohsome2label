@@ -23,7 +23,7 @@ def generate_filter(tag):
     if v:
         filters.append("{}={}".format(k, v))
     else:
-        filters.append("{k}=* and {k}!=no")
+        filters.append("{k}=* and {k}!=no".format(k=k))
     return " and ".join(filters)
 
 

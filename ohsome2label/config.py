@@ -102,6 +102,11 @@ class o2l_config(Config):
         return self.get_property("image", "img_api")
 
     @property
+    def img_url(self):
+        """get image api url"""
+        return self.get_property("image", "img_url")
+
+    @property
     def token(self):
         """get image api token"""
         return self.get_property("image", "api_token")

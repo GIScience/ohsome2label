@@ -7,3 +7,4 @@ tqdm==4.38.0
 Pillow==6.2.1
 requests==2.22.0
 geojson==2.5.0
+matplotlib==3.2.2
