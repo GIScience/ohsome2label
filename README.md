@@ -57,6 +57,7 @@ osm:
 
 image:
   img_api: bing
+  img_url: http://t0.tiles.virtualearth.net/tiles/a{q}.png?g=854&mkt=en-US&token={token}
   api_token : 'YOUR OWN API TOKEN'
   zoom: 16
 
@@ -75,6 +76,7 @@ image:
 | **osm** | `timestamp` | The timestamp of historical OSM data you want to retrieval. The date should be given in `[year-month-day]` |
 | **osm** | `types` | The object types you are aimed at, which could be `polygon`, `line`. |
 | **image** | `image_api` | The satellite imagery service you would like to use. Now `bing`,`mapbox`, `sentinel` are supported. |
+| **image** | `image_url` | The url template of satellite imagery service you would like to use. |
 | **image** | `api_token` | The API token should be applied individually by users. Please find the corresponding application pages as follows: [`bing`](https://www.bingmapsportal.com/), [`mapbox`](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/), [`sentinel`](https://services.sentinel-hub.com/oauth/auth?client_id=30cf1d69-af7e-4f3a-997d-0643d660a478&redirect_uri=https%3A%2F%2Fapps.sentinel-hub.com%2Fdashboard%2FoauthCallback.html&scope=&response_type=token&state=%252F) |
 | **image** | `zoom` | The zoom-in level of satellite imagery. This ['zoom level'](https://wiki.openstreetmap.org/wiki/Zoom_levels) would affect the spatial resolution in general.|
 
@@ -103,7 +105,8 @@ Commands:
   image      Download satellite image
   label      Generate tile
   printcfg   Print project config
-  vector     download vector OSM data from ohsomeAPI
+  quality    Generate OSM quality figure
+  vector     Download vector OSM data from ohsomeAPI
   visualize  Visualize of training samples
 
 
@@ -151,6 +154,13 @@ Tile the OSM data into given zoom level: 14
 
 Based on the previous label results, user could download the correspondingly satellite image for training.
 
+Templates of `image_url` for different `image_api`:
+
+- For bing: `http://t0.tiles.virtualearth.net/tiles/a{q}.png?g=854&mkt=en-US&token={token}` 
+- For mapbox: `http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token={token}` 
+- For sentinel: `https://services.sentinel-hub.com/ogc/wms/{token}?showLogo=false&service=WMS&request=GetMap&layers=ALL-BAND&styles=&format=image%2Ftiff&transparent=1&version=1.1.1&maxcc=20&time=2015-01-01%2F2020-01-01&priority=mostRecent&height=256&width=256&srs=EPSG%3A3857&bbox={bbox}` 
+- For custom URL: only support x,y,z and token in `image_url`
+
 ```bash
 $ ohsome2label image 
 -------------------------
@@ -192,6 +202,26 @@ With the default Heidelberg example, you would get the following training sample
 <img src="img/example.png" width="600" />
 </p>
 
+### Quality
+
+Generate intrinsic quality indications based on Historic OSM data, which give a insight into the intrinsic quality of OSM training samples. 
+```bash
+ohsome2label quality
+-------------------------
+Options:
+  -v, --verbose
+  --config PATH
+  --schema PATH
+-------------------------
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [01:48<00:00, 36.24s/it]
+
+```
+As a example for the default Heidelberg example, we hard-code three intrinsic quality indications: 1. density of OSM polygon features areas (area of polygon divided by the total area in square-kilometers); 2.density of OSM polygon features numbers (number of elements divided by the total area in square-kilometers); 3.density of OSM users (number of contributors divided by the total area in square-kilometers).
+In general, if the density of OSM features are getting stable, this could refer to a relatively complete situation. In the future, one may develop more sophisticated indicators based on specific “fitness-for-use” purposes.
+
+<p align="center">
+<img src="img/area_density.jpg" width="600" />
+</p>
 
 ### Print the configuration
 
@@ -236,5 +266,5 @@ Options:
 
 ### Acknowledgements
 
-The package relies heavily on the [OpenStreetMap History Data Analysis Framework](https://github.com/GIScience/oshdb) under the [ohsome](https://api.ohsome.org) API. The idea of this package has been inspired by the excellent work of [label-maker](https://github.com/developmentseed/label-maker). Last but not lease, we would like to thanks for the contributions of OpenStreetMap volunteer to make this happen.
+The package relies heavily on the [OpenStreetMap History Data Analysis Framework](https://github.com/GIScience/oshdb) under the [Ohsome](https://api.ohsome.org) API. The idea of this package has been inspired by the nice work of [label-maker](https://github.com/developmentseed/label-maker). Last but not lease, we would like to thanks for the contributions of OpenStreetMap volunteer to make this happen.
 - OpenStreetMap historical data used that contains [ODbL 1.0](https://opendatacommons.org/licenses/odbl/) licensed OSM history data for dates after September 12, 2012 and [CC-BY-SA 2.0](https://planet.osm.org/cc-by-sa/) licensed OSM history data for all dates prior to September 12, 2012.
