@@ -236,7 +236,7 @@ Options:
   --schema PATH
 -------------------------
 # # # # # # # # # # #  CONFIG  # # # # # # # # # # #
-{'_config': {'image': {'api_token': '', 'img_api': 'google', 'zoom': 14},
+{'_config': {'image': {'api_token': '', 'img_api': 'bing', 'zoom': 16},
              'osm': {'api': 'ohsome',
                      'bboxes': [8.625, 49.3711, 8.7334, 49.4397],
                      'tags': [{'key': 'landuse',
