@@ -165,7 +165,7 @@ class geococo(object):
     """
 
     def __init__(self, config):
-        self.cats = self.tags_to_cats(config.tags)
+        self.tags_to_cats(config.tags)
 
         # coco info
         info = {}
@@ -192,6 +192,7 @@ class geococo(object):
         return True
 
     def tags_to_cats(self, tags):
+        import ipdb; ipdb.set_trace()
         """Convert tags to coco categories."""
         self.catIdxs = {}
         self.cats = []
