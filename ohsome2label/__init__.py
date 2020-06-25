@@ -1,3 +1,4 @@
+__version__ = '1.0.1'
 from .config import *
 from .utils import *
 from .label import *

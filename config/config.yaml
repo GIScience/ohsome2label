@@ -18,6 +18,7 @@ osm:
   types: polygon
 
 image:
-  img_api: google
-  api_token : ''
+  img_api: bing
+  img_url: http://t0.tiles.virtualearth.net/tiles/a{q}.png?g=854&mkt=en-US&token={token}
+  api_token : 'YOUR_TOKEN'
   zoom: 14
