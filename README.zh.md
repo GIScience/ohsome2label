@@ -7,7 +7,7 @@
 <img src="img/logo.png" width="200" />
 </p>
 
-**README** | [English](https://github.com/GIScience/ohsome2label/blob/master/README.de) | **简体中文** |
+**README** | [English](https://github.com/GIScience/ohsome2label/blob/master/README.md) | **简体中文** |
 
 ### 基于OpenStreetMap历史数据生成机器学习训练样本
 
@@ -67,20 +67,20 @@ image:
 
 | 模块 | 参数 | 描述 |
 | -- | -- | -- |
-| **project** | `name` | 项目名称 |
-| **project** | `workspace` | 工作空间，用于储存项目数据 |
-| **project** | `project_time` | 项目时间 |
-| **project** | `task` | 你想进行的机器学习任务，目前支持`object detection`, `segmentation`.|
-| **osm** | `api` | 下载OSM数据的API，目前支持`ohsome`, `overpass`. |
-| **osm** | `url` | OSM数据API相对应的API请求网址，`https://api.ohsome.org/v1/elements/geometry`, `https://lz4.overpass-api.de/api/interpreter`. |
-| **osm** | `bboxes` | 目标区域的矩形框，形式为`[xmin, ymin, xmax, ymin]`, x为经度，y为维度，地图投影为WGS84。 |
-| **osm** | `tags` | 每个`tags`条目包含`label`, `key`和`value`三个部分，其中`label`是用户自定的名称，每个`label`可以对应多个`key`，`value`键值对，也就是目标OSM要素的键值对。若`value`为空则表示检索所有具有对应key的osm数据。|
-| **osm** | `timestamp` | 所要检索的OSM历史数据的时间戳，时间戳格式为`年-月-日` |
+| **project** | `name` | 项目名称； |
+| **project** | `workspace` | 工作空间，用于储存项目数据； |
+| **project** | `project_time` | 项目创建时间； |
+| **project** | `task` | 你想进行的机器学习任务，目前支持`object detection`, `segmentation`； |
+| **osm** | `api` | 下载OSM数据的API，目前支持`ohsome`, `overpass`； |
+| **osm** | `url` | OSM数据API相对应的API请求网址，`https://api.ohsome.org/v1/elements/geometry`, `https://lz4.overpass-api.de/api/interpreter`； |
+| **osm** | `bboxes` | 目标区域的矩形框，形式为`[xmin, ymin, xmax, ymin]`, x为经度，y为维度，地图投影为WGS84； |
+| **osm** | `tags` | 每个`tags`条目包含`label`, `key`和`value`三个部分，其中`label`是用户自定的名称，每个`label`可以对应多个`key`，`value`键值对，也就是目标OSM要素的键值对。若`value`为空则表示检索所有具有对应key的osm数据； |
+| **osm** | `timestamp` | 所要检索的OSM历史数据的时间戳，时间戳格式为`年-月-日`； |
 | **osm** | `types` | 地理对象的集合类型，现在仅支持`polygon`类型 |
-| **image** | `image_api` | 卫星影象服务。现在支持`bing`,`mapbox`, `sentinel`。|
-| **image** | `image_url` | 对应的影像服务地址。 |
-| **image** | `api_token` | 影像服务的api密钥，详情请见[`bing`](https://www.bingmapsportal.com/), [`mapbox`](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/), [`sentinel`](https://services.sentinel-hub.com/oauth/auth?client_id=30cf1d69-af7e-4f3a-997d-0643d660a478&redirect_uri=https%3A%2F%2Fapps.sentinel-hub.com%2Fdashboard%2FoauthCallback.html&scope=&response_type=token&state=%252F) |
-| **image** | `zoom` | 卫星影像的缩放级别。['缩放级别'](https://wiki.openstreetmap.org/wiki/Zoom_levels)会影响影像的空间分辨率。|
+| **image** | `image_api` | 卫星影象服务。现在支持`bing`,`mapbox`, `sentinel`； |
+| **image** | `image_url` | 对应的影像服务地址； |
+| **image** | `api_token` | 影像服务的api密钥，详情请见[`bing`](https://www.bingmapsportal.com/), [`mapbox`](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/), [`sentinel`](https://services.sentinel-hub.com/oauth/auth?client_id=30cf1d69-af7e-4f3a-997d-0643d660a478&redirect_uri=https%3A%2F%2Fapps.sentinel-hub.com%2Fdashboard%2FoauthCallback.html&scope=&response_type=token&state=%252F)； |
+| **image** | `zoom` | 卫星影像的缩放级别。['缩放级别'](https://wiki.openstreetmap.org/wiki/Zoom_levels)会影响影像的空间分辨率。 |
 
 ### 命令行功能
 
