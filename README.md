@@ -6,7 +6,7 @@
 <img src="img/logo.png" width="200" />
 </p>
 
-**README** [English](https://github.com/GIScience/ohsome2label/blob/master/README.de) | [简体中文](https://github.com/GIScience/ohsome2label/blob/master/README.zh.md)
+**README** | **English** | [简体中文](https://github.com/GIScience/ohsome2label/blob/master/README.zh.md) |
 
 ### Historical OpenStreetMap Objects to Machine Learning Training Samples
 
@@ -86,7 +86,7 @@ image:
 
 Once the [config.yaml](config/config.yaml) is well prepared, now **ohsome2label**  would help your to prepare your customized OSM training samples by using the following command line functions.
 Please notice, you could define your own config.yaml file for all command line functions, for instance  ```  ohsome2label --config PATH/OWN_config.yaml vector ``` .
-### Help
+#### Help
 
 Check out the summary of ohsome2label command line function with the following command.
  
@@ -114,7 +114,7 @@ Commands:
 
 ```
 
-### Vector
+#### Vector
 
 Download the historical OpenStreetMap vector data with the given timestamp by querying the [ohsome](https://api.ohsome.org/) API. The results is in geojson format.
 
@@ -132,7 +132,7 @@ Download OSM historical data into dir:
 
 ```
 
-### Label
+#### Label
 
 The downloaded OpenStreetMap data together with the target objects would be labelled with specific zoom level. The label output also depends on different `ML_task`, for examples, object bounding boxes for `object detection`, object footprints for 'semantic segmentation', and instance footprint for `instance segmentation`.
 
@@ -152,7 +152,7 @@ Tile the OSM data into given zoom level: 14
 
 ```
 
-### Image
+#### Image
 
 Based on the previous label results, user could download the correspondingly satellite image for training.
 
@@ -176,7 +176,7 @@ Start download satellite image!
 
 ```
 
-### Visualization
+#### Visualization
 
 Visualize example satellite image together with OpenStreetMap features. Requires the `/tile` folder from the previous step. Accepts an additional flag:
 - `-n` or `--num`: _integer_ number of examples images to create per class. (default: `50`)
@@ -203,7 +203,7 @@ With the default Heidelberg example, you would get the following training sample
 <img src="img/example.png" width="600" />
 </p>
 
-### Quality
+#### Quality
 
 Generate intrinsic quality indications based on Historic OSM data, which give a insight into the intrinsic quality of OSM training samples. 
 ```bash
@@ -224,7 +224,7 @@ In general, if the density of OSM features are getting stable, this could refer 
 <img src="img/area_density.jpg" width="600" />
 </p>
 
-### Print the configuration
+#### Print the configuration
 
 Users could use the print configuration to check their configuration regarding the project.
 

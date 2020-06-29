@@ -7,16 +7,16 @@
 <img src="img/logo.png" width="200" />
 </p>
 
-**README** [English](https://github.com/GIScience/ohsome2label/blob/master/README.de) | [简体中文](https://github.com/GIScience/ohsome2label/blob/master/README.zh.md)
+**README** | [English](https://github.com/GIScience/ohsome2label/blob/master/README.de) | **简体中文** |
 
 ### 基于OpenStreetMap历史数据生成机器学习训练样本
 
-**ohsome2label** 为卫星机器学习应用提供了灵活的样本准备工具。
+ohsome2label 为卫星机器学习应用提供了灵活的样本准备工具。
 
 - **自定义对象** - 用户自定义感兴趣的地理范围、时间标签，通过请求[ohsome API](https://api.ohsome.org/)，下载全历史OSM数据。
 - **多种卫星影像支持** - 用户可以通过不同的影像API下载不同的卫星影像。
 - **无缝训练** - 训练样本标注使用[Microsoft COCO](http://cocodataset.org/#format-data) 格式，可以无缝地应用于模型训练。
-- **OSM数据质量评估(开发中)** - 通过分析OSM历史数据，提供固有的OSM数据质量评估，用于定制更优的训练数据。
+- **OSM数据质量评估(开发中)** - 通过分析OSM历史数据，提供内在OSM数据质量评估，用于定制更优的训练数据。
 
 程序的输出支持多种流行的机器学习任务（如对象检测、语义分割或实例分割）。
 
@@ -84,9 +84,9 @@ image:
 
 ### 命令行功能
 
-在准备好[config.yaml](config/config.yaml)后，通过下面的命令行功能，**ohsome2label**可以进行OSM训练数据的生成。
+在准备好[config.yaml](config/config.yaml)后，通过下面的命令行功能，ohsome2label可以进行OSM训练数据的生成。
 默认的配置文件路径为当前路径下的`config`文件夹中的`config.yaml`,对应的有一个验证文件`schema.yaml`用于验证配置文件的正确性，你也可以通过```  ohsome2label --config path/to/config.yaml --schema /path/to/schema.yaml function ``` 来制定配置文件的位置。
-### help
+#### 帮助
 
 使用`--help`来查看`ohsome2label`命令行功能的摘要
  
@@ -114,7 +114,7 @@ Commands:
 
 ```
 
-### Vector
+#### OSM矢量下载
 
 通过[ohsome API](https://api.ohsome.org/)下载你所需的OSM历史矢量数据，返回的结果形式是geojson。
 
@@ -132,7 +132,7 @@ Download OSM historical data into dir:
 
 ```
 
-### Label
+#### 标注生成
 
 根据所需的缩放级别，对下载后的OSM数据进行标注。不同的`ML_task`会有不同形式的标注, 例如，针对`object detection`会生成矩形框标注, `instance segmentation`则会生成对象掩模（mask）。
 
@@ -152,7 +152,7 @@ Tile the OSM data into given zoom level: 14
 
 ```
 
-### Image
+#### 影像下载
 
 基于之前生成的标注结果，下载相应的卫星影象数据。
 
@@ -178,11 +178,11 @@ Start download satellite image!
 
 ```
 
-### Visualization
+#### 预览可视化
 
-Visualize example satellite image together with OpenStreetMap features. Requires the `/tile` folder from the previous step. Accepts an additional flag:
-- `-n` or `--num`: _integer_ number of examples images to create per class. (default: `50`)
-- `-t` or `--type`: _str_ the visualization type should be selected from `combined` or `overlay` (default: `combined`) 
+预览生成的OSM标注影像以及下载的卫星影象。该命令接受如下的参数：
+- `-n` 或 `--num`: 预览瓦片的数量(默认为`50`)。
+- `-t` 或 `--type`: 预览的形式，目前支持`combined`和`overlay`(默认为`combined`) 。
 
 
 ```bash
@@ -199,15 +199,15 @@ Visualization mode: combined the satellite image with OpenStreetMap features.
 
 
 ```
-With the default Heidelberg example, you would get the following training samples for landuse classes: urban and Industry.
+在默认示例中，将获得海德堡有关urban和industry的土地利用类别的训练样本。
 
 <p align="center">
 <img src="img/example.png" width="600" />
 </p>
 
-### Quality
+#### 数据质量
 
-Generate intrinsic quality indications based on Historic OSM data, which give a insight into the intrinsic quality of OSM training samples. 
+根据历史OSM数据生成内在质量指示，从而深入了解OSM训练样本的内在质量。
 ```bash
 ohsome2label quality
 -------------------------
@@ -219,13 +219,13 @@ Options:
 100%|███████████████████████████████████| 3/3 [01:48<00:00, 36.24s/it]
 
 ```
-作为默认的海德堡示例的示例，我们提供了三个内在固有质量指标：1. OSM多边形要素区域的密度（每平方公里内的OSM多边形面积）； 2. OSM多边形要素数量的密度（每平方公里内的OSM元素数） 3. OSM用户的密度（每平方公里内的贡献者数量。
+作为默认的海德堡示例的示例，我们提供了三个内在质量指标：1. OSM多边形要素区域的密度（每平方公里内的OSM多边形面积）； 2. OSM多边形要素数量的密度（每平方公里内的OSM元素数） 3. OSM用户的密度（每平方公里内的贡献者数量。
 
 <p align="center">
 <img src="img/area_density.jpg" width="600" />
 </p>
 
-### Print the configuration
+#### 输出配置
 
 用户可以使用`printcfg`来查看该项目的配置。
 
