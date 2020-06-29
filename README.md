@@ -6,14 +6,16 @@
 <img src="img/logo.png" width="200" />
 </p>
 
+**README** [English](https://github.com/GIScience/ohsome2label/blob/master/README.de) | [简体中文](https://github.com/GIScience/ohsome2label/blob/master/README.zh.md)
+
 ### Historical OpenStreetMap Objects to Machine Learning Training Samples
 
 The **ohsome2label** offers a flexible label preparation tool for satellite machine learning applications.
 
 - **Customized Object** - user-defined geospatial objects are retrieved and extracted from OpenStreetMap full-history data by requesting [ohsome](https://api.ohsome.org/) web API. 
 - **Various Satellite Images** - user could downloads corresponding satellite imagery tiles from different data providers.
-- **Seamless Training** - object labels together with images would be packaged and converted to [Microsoft COCO](http://cocodataset.org/#format-data) .json format to provide a seamleass connection to further model training.
-- **OSM Quality Measurement (currently under developing)** - hitorical OpenStreetMap anaylsis allows us to provide exclusive intrinsic quliaty measurements in addition to the customized training samples.
+- **Seamless Training** - object labels together with images would be packaged and converted to [Microsoft COCO](http://cocodataset.org/#format-data) .json format to provide a seamless connection to further model training.
+- **OSM Quality Measurement (currently under developing)** - historical OpenStreetMap analysis allows us to provide exclusive intrinsic quality measurements in addition to the customized training samples.
 
 The output package could support directly training of popular machine learning tasks (e.g., object detection, semantic segmentation, instance segmentation etc,). 
 
@@ -30,7 +32,7 @@ The output package could support directly training of popular machine learning t
 
 ### Configuration
 
-We believe you are familiar with [OpenStreetMap](https://www.openstreetmap.org/#map=15/47.1577/3.8563):round_pushpin:, othewise you are highly recommended to check this out since OpenStreetMap contains a huge types of geographical data, ranging from highways to different buildings. Before you start playing around wiht ohsome2labe, you have to specify parameters, such as the target bouding box or the geospatial object you are looking for. 
+We believe you are familiar with [OpenStreetMap](https://www.openstreetmap.org), otherwise you are highly recommended to check this out since OpenStreetMap contains a huge types of geographical data, ranging from highways to different buildings. Before you start playing around with ohsome2label, you have to specify parameters, such as the target bounding box or the geospatial object you are looking for. 
  
 Here is a example for [config.yaml](config/config.yaml) file.
  
@@ -44,11 +46,11 @@ project:
 
 osm:
   api: ohsome
-  url: https://api.ohsome.org/v0.9/elements/geometry
+  url: https://api.ohsome.org/v1/elements/geometry
   bboxes: [8.625,49.3711,8.7334,49.4397]
   tags:
     - {'label': 'urban', 'key': 'landuse', 'value': 'residential'}
-    - {'label': 'urabn', 'key': 'landuse', 'value': 'garages'}
+    - {'label': 'urban', 'key': 'landuse', 'value': 'garages'}
     - {'label': 'industry', 'key': 'landuse', 'value': 'railway'}
     - {'label': 'industry', 'key': 'landuse', 'value': 'industrial'}
 
@@ -70,12 +72,12 @@ image:
 | **project** | `project_time` | The created time of the project. |
 | **project** | `task` | The type of machine learning tasks you would like to use afterwards. This could be `object detection`, `segmentation`.|
 | **osm** | `api` | The OSM data query API, which could be `ohsome`, `overpass`. |
-| **osm** | `url` | The corresponding URL for OSM data query API , which could be `https://api.ohsome.org/v0.9/elements/geometry`, `https://lz4.overpass-api.de/api/interpreter`. |
+| **osm** | `url` | The corresponding URL for OSM data query API , which could be `https://api.ohsome.org/v1/elements/geometry`, `https://lz4.overpass-api.de/api/interpreter`. |
 | **osm** | `bboxes` | The box boundary of target area, which is given in form `[xmin, ymin, xmax, ymin]`, x and y refer to longitude and latitude. The default map project is WGS84. |
 | **osm** | `tags` | The target key and values pairs of OSM feature, where `label` could be defined by yourself and shared by several key-value paris. A valid OSM key is necessary, where OSM values could be empty means all values are included. |
 | **osm** | `timestamp` | The timestamp of historical OSM data you want to retrieval. The date should be given in `[year-month-day]` |
 | **osm** | `types` | The object types you are aimed at, which could be `polygon`, `line`. |
-| **image** | `image_api` | The satellite imagery service you would like to use. Now `bing`,`mapbox`, `sentinel` are supported. |
+| **image** | `image_api` | The satellite imagery service you would like to use. Now `bing`,`mapbox`, `sentinel` are supported. Also, `custom` TMS is also supported|
 | **image** | `image_url` | The url template of satellite imagery service you would like to use. |
 | **image** | `api_token` | The API token should be applied individually by users. Please find the corresponding application pages as follows: [`bing`](https://www.bingmapsportal.com/), [`mapbox`](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/), [`sentinel`](https://services.sentinel-hub.com/oauth/auth?client_id=30cf1d69-af7e-4f3a-997d-0643d660a478&redirect_uri=https%3A%2F%2Fapps.sentinel-hub.com%2Fdashboard%2FoauthCallback.html&scope=&response_type=token&state=%252F) |
 | **image** | `zoom` | The zoom-in level of satellite imagery. This ['zoom level'](https://wiki.openstreetmap.org/wiki/Zoom_levels) would affect the spatial resolution in general.|
@@ -86,7 +88,7 @@ Once the [config.yaml](config/config.yaml) is well prepared, now **ohsome2label*
 Please notice, you could define your own config.yaml file for all command line functions, for instance  ```  ohsome2label --config PATH/OWN_config.yaml vector ``` .
 ### Help
 
-Check out the summary of ohsome2labl command line function with the following command.
+Check out the summary of ohsome2label command line function with the following command.
  
  ```bash
 $ ohsome2label --help
@@ -114,7 +116,7 @@ Commands:
 
 ### Vector
 
-Download the historical OpenStreetMap vector data with the given timestamp by querying the [ohsome](https://api.ohsome.org/) API. The results is in -gzip format, you could unzip it to -geojson file with tools like [7zip](https://www.7-zip.org/).
+Download the historical OpenStreetMap vector data with the given timestamp by querying the [ohsome](https://api.ohsome.org/) API. The results is in geojson format.
 
 ```bash
 $ ohsome2label vector
@@ -126,7 +128,7 @@ Options:
 -------------------------
 Download OSM historical data into dir:
 
-.\deepvgi-ohsome2label\example_result\other\raw
+.\path\to\workspace\other\raw
 
 ```
 
@@ -170,8 +172,7 @@ Options:
   --schema PATH
 -------------------------
 Start download satellite image!
-100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 24/24 [00:03<00:00,  6.57it/s]
-
+100%|███████████████████████████████████| 24/24 [00:03<00:00,  6.57it/s]
 
 ```
 
@@ -213,7 +214,7 @@ Options:
   --config PATH
   --schema PATH
 -------------------------
-100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [01:48<00:00, 36.24s/it]
+100%|███████████████████████████████████| 3/3 [01:48<00:00, 36.24s/it]
 
 ```
 As a example for the default Heidelberg example, we hard-code three intrinsic quality indications: 1. density of OSM polygon features areas (area of polygon divided by the total area in square-kilometers); 2.density of OSM polygon features numbers (number of elements divided by the total area in square-kilometers); 3.density of OSM users (number of contributors divided by the total area in square-kilometers).
@@ -253,7 +254,7 @@ Options:
                                'value': 'industrial'}],
                      'timestamp': datetime.date(2019, 10, 20),
                      'types': 'polygon',
-                     'url': 'https://api.ohsome.org/v0.9/elements/geometry'},
+                     'url': 'https://api.ohsome.org/v1/elements/geometry'},
              'project': {'name': 'HD_landuse',
                          'project_time': datetime.date(2020, 5, 18),
                          'task': 'segmentation',
