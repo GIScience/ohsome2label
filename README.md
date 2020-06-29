@@ -85,7 +85,7 @@ image:
 ### Command line functions
 
 Once the [config.yaml](config/config.yaml) is well prepared, now **ohsome2label**  would help your to prepare your customized OSM training samples by using the following command line functions.
-Please notice, you could define your own config.yaml file for all command line functions, for instance  ```  ohsome2label --config PATH/OWN_config.yaml vector ``` .
+Please notice, you could define your own config.yaml file for all command line functions, for instance  ```  ohsome2label --config PATH/OWN_config.yaml vector ``` 
 #### Help
 
 Check out the summary of ohsome2label command line function with the following command.
@@ -134,7 +134,7 @@ Download OSM historical data into dir:
 
 #### Label
 
-The downloaded OpenStreetMap data together with the target objects would be labelled with specific zoom level. The label output also depends on different `ML_task`, for examples, object bounding boxes for `object detection`, object footprints for 'semantic segmentation', and instance footprint for `instance segmentation`.
+The downloaded OpenStreetMap data together with the target objects would be labelled with specific zoom level. The label output also depends on different `ML_task`, for examples, object bounding boxes for `object detection`, object footprints for `semantic segmentation`, and instance footprint for `instance segmentation`.
 
 ```bash
 $ ohsome2label label
@@ -161,7 +161,7 @@ Templates of `image_url` for different `image_api`:
 - For bing: `http://t0.tiles.virtualearth.net/tiles/a{q}.png?g=854&mkt=en-US&token={token}` 
 - For mapbox: `http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token={token}` 
 - For sentinel: `https://services.sentinel-hub.com/ogc/wms/{token}?showLogo=false&service=WMS&request=GetMap&layers=ALL-BAND&styles=&format=image%2Ftiff&transparent=1&version=1.1.1&maxcc=20&time=2015-01-01%2F2020-01-01&priority=mostRecent&height=256&width=256&srs=EPSG%3A3857&bbox={bbox}` 
-- For custom URL: only support x,y,z and token in `image_url`
+- For custom URL: only support x, y, z and token in `image_url`
 
 ```bash
 $ ohsome2label image 
@@ -218,7 +218,7 @@ Options:
 
 ```
 As a example for the default Heidelberg example, we hard-code three intrinsic quality indications: 1. density of OSM polygon features areas (area of polygon divided by the total area in square-kilometers); 2.density of OSM polygon features numbers (number of elements divided by the total area in square-kilometers); 3.density of OSM users (number of contributors divided by the total area in square-kilometers).
-In general, if the density of OSM features are getting stable, this could refer to a relatively complete situation. In the future, one may develop more sophisticated indicators based on specific “fitness-for-use” purposes.
+In general, if the density of OSM features are getting stable, this could refer to a relatively complete mapping status. In the future, one may develop more sophisticated indicators based on specific “fitness-for-use” purposes.
 
 <p align="center">
 <img src="img/area_density.jpg" width="600" />
@@ -267,5 +267,5 @@ Options:
 
 ### Acknowledgements
 
-The package relies heavily on the [OpenStreetMap History Data Analysis Framework](https://github.com/GIScience/oshdb) under the [Ohsome](https://api.ohsome.org) API. The idea of this package has been inspired by the nice work of [label-maker](https://github.com/developmentseed/label-maker). Last but not lease, we would like to thanks for the contributions of OpenStreetMap volunteer to make this happen.
+The package relies heavily on the [OpenStreetMap History Data Analysis Framework](https://github.com/GIScience/oshdb) under the [ohsome](https://api.ohsome.org) API. The idea of this package has been inspired by the nice work of [label-maker](https://github.com/developmentseed/label-maker). Last but not lease, we would like to thanks for the contributions of OpenStreetMap volunteer to make this happen.
 - OpenStreetMap historical data used that contains [ODbL 1.0](https://opendatacommons.org/licenses/odbl/) licensed OSM history data for dates after September 12, 2012 and [CC-BY-SA 2.0](https://planet.osm.org/cc-by-sa/) licensed OSM history data for all dates prior to September 12, 2012.
