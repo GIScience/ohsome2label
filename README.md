@@ -10,7 +10,7 @@
 
 ### Historical OpenStreetMap Objects to Machine Learning Training Samples
 
-The **ohsome2label** offers a flexible label preparation tool for satellite machine learning applications.
+The ohsome2label offers a flexible label preparation tool for satellite machine learning applications.
 
 - **Customized Object** - user-defined geospatial objects are retrieved and extracted from OpenStreetMap full-history data by requesting [ohsome](https://api.ohsome.org/) web API. 
 - **Various Satellite Images** - user could downloads corresponding satellite imagery tiles from different data providers.
@@ -84,7 +84,7 @@ image:
 
 ### Command line functions
 
-Once the [config.yaml](config/config.yaml) is well prepared, now **ohsome2label**  would help your to prepare your customized OSM training samples by using the following command line functions.
+Once the [config.yaml](config/config.yaml) is well prepared, now ohsome2label  would help your to prepare your customized OSM training samples by using the following command line functions.
 Please notice, you could define your own config.yaml file for all command line functions, for instance  ```  ohsome2label --config PATH/OWN_config.yaml vector ``` .
 #### Help
 

@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 import requests
+import time
 from tqdm import tqdm
 
 from ohsome2label.tile import Tile, get_xy_bbox
@@ -17,16 +18,22 @@ def get_area(x, y):
 
 def download(fpath, api, params={}, retry=5):
     """Download with url and params"""
-    with requests.get(api, params) as r:
-        if r.status_code == 200:
-            with open(fpath, "wb") as f:
-                f.write(r.content)
-        elif retry > 0:
-            retry -= 1
-            download(fpath, api, params, retry)
-        else:
-            print(r.url)
-            raise RequestError("Request Error {}".format(r.status_code))
+    try:
+        r = requests.get(api, params)
+    except requests.ConnectionError:
+        r.status_code = "ConnectionError"
+
+    if r.status_code == 200:
+        with open(fpath, "wb") as f:
+            f.write(r.content)
+    elif retry > 0: 
+        if r.status_code == "ConnectionError":
+            time.sleep(30)
+        retry -= 1
+        download(fpath, api, params, retry)
+    else:
+        print(r.url)
+        raise RequestError("Request Error {}".format(r.status_code))
 
 
 def download_osm(cfg, workspace):
