@@ -20,6 +20,15 @@ def download(fpath, api, params={}, retry=5):
     """Download with url and params"""
     try:
         r = requests.get(api, params)
+        if r.status_code == 200:
+            with open(fpath, "wb") as f:
+                f.write(r.content)
+        elif retry > 0: 
+            retry -= 1
+            download(fpath, api, params, retry)
+        else:
+            print(r.url)
+            raise RequestError("Request Error {}".format(r.status_code))
     except requests.ConnectionError:
         print("ERROR ConnectionError")
         if retry > 0:
@@ -28,17 +37,6 @@ def download(fpath, api, params={}, retry=5):
             download(fpath, api, params, retry)
         else:
             print("Retry execced max time")
-
-
-    if r.status_code == 200:
-        with open(fpath, "wb") as f:
-            f.write(r.content)
-    elif retry > 0: 
-        retry -= 1
-        download(fpath, api, params, retry)
-    else:
-        print(r.url)
-        raise RequestError("Request Error {}".format(r.status_code))
 
 
 def download_osm(cfg, workspace):
