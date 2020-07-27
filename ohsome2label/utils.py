@@ -21,14 +21,19 @@ def download(fpath, api, params={}, retry=5):
     try:
         r = requests.get(api, params)
     except requests.ConnectionError:
-        r.status_code = "ConnectionError"
+        print("ERROR ConnectionError")
+        if retry > 0:
+            time.sleep(30)
+            retry -= 1
+            download(fpath, api, params, retry)
+        else:
+            print("Retry execced max time")
+
 
     if r.status_code == 200:
         with open(fpath, "wb") as f:
             f.write(r.content)
     elif retry > 0: 
-        if r.status_code == "ConnectionError":
-            time.sleep(30)
         retry -= 1
         download(fpath, api, params, retry)
     else:
