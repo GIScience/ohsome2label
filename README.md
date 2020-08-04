@@ -84,13 +84,8 @@ image:
 
 ### Command line functions
 
-<<<<<<< HEAD
-Once the [config.yaml](config/config.yaml) is well prepared, now ohsome2label  would help your to prepare your customized OSM training samples by using the following command line functions.
-Please notice, you could define your own config.yaml file for all command line functions, for instance  ```  ohsome2label --config PATH/OWN_config.yaml vector ``` .
-=======
 Once the [config.yaml](config/config.yaml) is well prepared, now **ohsome2label**  would help your to prepare your customized OSM training samples by using the following command line functions.
 Please notice, you could define your own config.yaml file for all command line functions, for instance  ```  ohsome2label --config PATH/OWN_config.yaml vector ``` 
->>>>>>> e7822fa3482ebbc998ebbe180638792225dbf0aa
 #### Help
 
 Check out the summary of ohsome2label command line function with the following command.
