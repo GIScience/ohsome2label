@@ -4,7 +4,7 @@ click==7.0
 pykwalify==1.7.0
 shapely==1.6.4
 tqdm==4.38.0
-Pillow==6.2.1
+Pillow>=7.1.0
 requests==2.22.0
 geojson==2.5.0
 matplotlib==3.2.2
