@@ -204,7 +204,7 @@ class geococo(object):
         for tag in tags:
             cat = {}
             cat["supercategory"] = tag["label"]
-            cat["id"] = _label[tag["label"]]
+            cat["id"] = _label[tag["label"]]+1
             cat["name"] = tag["label"]
             self.cats.append(cat)
             self.catIdxs[tag["label"]] = cat["id"]
