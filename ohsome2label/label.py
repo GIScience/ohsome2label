@@ -298,7 +298,7 @@ def gen_label(cfg, workspace):
                 fc = FeatureCollection(feats)
                 tile_name = "{0.z}.{0.x}.{0.y}".format(tile)
                 tile_path = os.path.join(tile_dir, tile_name + ".geojson")
-                img_path = os.path.join(img_dir, tile_name + ".png")
+                img_path = os.path.join(img_dir, tile_name + ".png") # default image extension of .png
                 with open(tile_path, "w", encoding="utf-8") as gj:
                     try:
                         geojson.dump(fc, gj)
@@ -311,7 +311,7 @@ def gen_label(cfg, workspace):
                 img["id"] = imgIdx
                 img["width"] = nx
                 img["height"] = ny
-                img["file_name"] = img_path.split("/")[-1]
+                img["file_name"] = tile_name + ".png"
                 coco.imgs.append(img)
                 geoms = check_topo(feats, tile, nx, ny)
                 burned_feats = burn_tile(geoms, cfg.task, pal, img_path, nx, ny)
