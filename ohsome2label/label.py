@@ -35,7 +35,7 @@ def gen_anno(coords, idx, imgIdx, catIdx):
     anno["category_id"] = catIdx
     anno["iscrowd"] = 0
     seg = []
-    anno["image_id"] = imgIdx + 1
+    anno["image_id"] = imgIdx
     xs = [x for x, _ in coords]
     ys = [y for _, y in coords]
     for _x, _y in zip(xs, ys):
