@@ -263,7 +263,11 @@ Options:
 # # # # # # # # # # # #  END  # # # # # # # # # # # #
 
 ```
+### Citations
 
+Wu, Zhaoyan, Li, Hao, & Zipf, Alexander. (2020).From Historical OpenStreetMap data to customized training samples for geospatial machine learning. In proceedings of the Academic Track at the State of the Map 2020 Online Conference, July 4-5 2020. DOI: http://doi.org/10.5281/zenodo.3923040 
+
+Raifer, M., Troilo, R., Kowatsch, F., Auer, M., Loos, L., Marx, S., Przybill, K., Fendrich, S., Mocnik, F.-B.& Zipf, A. (2019): OSHDB: a framework for spatio-temporal analysis of OpenStreetMap history data.Open Geospatial Data, Software and Standards 2019 4:3. https://doi.org/10.1186/s40965-019-0061-3
 
 ### Acknowledgements
 
