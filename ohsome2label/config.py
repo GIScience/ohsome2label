@@ -151,10 +151,10 @@ class workspace(object):
 
     def __init__(self, root):
         self.workspace = root
-        self.img = os.path.join(self.workspace, "image")
-        self.anno = os.path.join(self.workspace, "annotation")
+        self.img = os.path.join(self.workspace, "images")
+        self.anno = os.path.join(self.workspace, "annotations")
         self.other = os.path.join(self.workspace, "other")
-        self.label = os.path.join(self.workspace, "label")
+        self.label = os.path.join(self.workspace, "labels")
         self.preview = os.path.join(self.workspace, "preview")
         self.raw = os.path.join(self.other, "raw")
         self.tile = os.path.join(self.other, "tile")
