@@ -45,7 +45,7 @@ def download_osm(cfg, workspace):
         "bboxes": "{},{},{},{}".format(*cfg.bboxes),
         "time": cfg.timestamp,
         "types": cfg.types,
-        "properies": cfg.properties,
+        "properties": cfg.properties,
     }
     tgt_dir = workspace.raw
     for tag in tqdm(cfg.tags):
