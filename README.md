@@ -271,5 +271,5 @@ Raifer, M., Troilo, R., Kowatsch, F., Auer, M., Loos, L., Marx, S., Przybill, K.
 
 ### Acknowledgements
 
-The package relies heavily on the [OpenStreetMap History Data Analysis Framework](https://github.com/GIScience/oshdb) under the [ohsome](https://api.ohsome.org) API. The idea of this package has been inspired by the nice work of [label-maker](https://github.com/developmentseed/label-maker). Last but not lease, we would like to thanks for the contributions of OpenStreetMap volunteer to make this happen.
+The package relies heavily on the [OpenStreetMap History Database](https://github.com/GIScience/oshdb) and the [ohsome API](https://api.ohsome.org). The idea of this package has been inspired by the nice work of [label-maker](https://github.com/developmentseed/label-maker). Last but not least, we would like to thanks for the contributions of OpenStreetMap volunteer to make this happen.
 - OpenStreetMap historical data used that contains [ODbL 1.0](https://opendatacommons.org/licenses/odbl/) licensed OSM history data for dates after September 12, 2012 and [CC-BY-SA 2.0](https://planet.osm.org/cc-by-sa/) licensed OSM history data for all dates prior to September 12, 2012.
