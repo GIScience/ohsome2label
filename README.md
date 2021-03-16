@@ -197,7 +197,7 @@ Visualization mode: combined the satellite image with OpenStreetMap features.
 
 
 ```
-With the default Heidelberg example, you would get the following training samples for landuse classes: urban and Industry.
+With the default Heidelberg example, you would get the following training samples for the landuse classes: urban and industry.
 
 <p align="center">
 <img src="img/example.png" width="600" />
