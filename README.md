@@ -73,7 +73,7 @@ image:
 | **project** | `task` | The type of machine learning tasks you would like to use afterwards. This could be `object detection`, `segmentation`.|
 | **osm** | `api` | The OSM data query API, which could be `ohsome`, `overpass`. |
 | **osm** | `url` | The corresponding URL for OSM data query API , which could be `https://api.ohsome.org/v1/elements/geometry`, `https://lz4.overpass-api.de/api/interpreter`. |
-| **osm** | `bboxes` | The box boundary of target area, which is given in form `[xmin, ymin, xmax, ymin]`, x and y refer to longitude and latitude. The default map project is WGS84. |
+| **osm** | `bboxes` | The box boundary of target area, which is given in form `[xmin, ymin, xmax, ymin]`, x and y refer to longitude and latitude. Longitude ranges from -180 to 180, and latitude ranges from 0 to 90. The default map project is WGS84. |
 | **osm** | `tags` | The target key and values pairs of OSM feature, where `label` could be defined by yourself and shared by several key-value paris. A valid OSM key is necessary, where OSM values could be empty means all values are included. |
 | **osm** | `timestamp` | The timestamp of historical OSM data you want to retrieval. The date should be given in `[year-month-day]` |
 | **osm** | `types` | The object types you are aimed at, which could be `polygon`, `line`. |
