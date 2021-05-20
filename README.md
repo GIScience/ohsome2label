@@ -29,6 +29,12 @@ The output package could support directly training of popular machine learning t
  ``` 
  pip install ohsome2label
  ```
+ 
+ or clone the Github repo and install it locally
+ 
+ ``` 
+ pip install --editable .
+ ``` 
 
 ### Configuration
 
