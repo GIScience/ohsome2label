@@ -10,7 +10,7 @@ In this walkthrough, we will show you how to train a building detection model wi
 
 <p  align="center">
 
-<img  src="figures/results_demo.png"  width="800"  />
+<img  src="figures/detections.png"  width="600"  />
 
 </p>
 
