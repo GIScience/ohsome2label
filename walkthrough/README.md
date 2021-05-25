@@ -10,7 +10,7 @@ In this walkthrough, we will show you how to train a building detection model wi
 
 <p  align="center">
 
-<img  src="figures/results_demo.png"  width="600"  />
+<img  src="figures/results_demo.png"  width="800"  />
 
 </p>
 
@@ -82,7 +82,7 @@ $ ohsome2label label
 
 <p  align="center">
 
-<img  src="figures/labels.png"  width="400"  />
+<img  src="figures/labels.png"  width="600"  />
 
 </p>
 
@@ -92,6 +92,12 @@ $ ohsome2label label
 $ ohsome2label image
 ```
 
+<p  align="center">
+
+<img  src="figures/image.png"  width="600"  />
+
+</p>
+
 * preview the labels and satellite images:
 
 ```shell
@@ -100,7 +106,7 @@ $ ohsome2label visualize -t overlay
 
 <p  align="center">
 
-<img  src="figures/previews.png"  width="400"  />
+<img  src="figures/previews.png"  width="600"  />
 
 </p>
 
