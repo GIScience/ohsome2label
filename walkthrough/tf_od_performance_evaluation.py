@@ -148,7 +148,7 @@ def feature_coords_to_lat_lon(feature):
     PixelY = TileY * 256
 
     coords = feature['geometry']['coordinates'][0]
-    translated = [[PixelX+x, PixelY+255-y] for x, y in coords]
+    translated = [[PixelX + y, PixelY + x] for x, y in coords]
     transformed = [[i for i in pixel_coords_zoom_to_lat_lon(x, y, zoom)] for x,y in translated]
 
     return transformed
