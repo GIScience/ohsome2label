@@ -34,7 +34,7 @@ Since we noticed several finished humanitarian mapping project in kalola area, T
 
 #### Configuration
 
-First, replace the default [config.yaml](models/research/object_detection/ohsome/config/config.yaml) with the follow file:
+First, replace the default [config.yaml](ohsome2label/config/config.yaml) with the follow file:
 
 ```yaml
 project:
