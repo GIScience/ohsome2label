@@ -142,7 +142,7 @@ If you've already finished the installation procedures as described in [SETUP.md
 #### Obtain the pre-trained model
 
 
-From [Tensorflow model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md), we selected the `ssd_inception_v2_coco` network as our base model. For the detailed set up, please follow the steps:
+From [Tensorflow model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf1_detection_zoo.md), we selected the `ssd_inception_v2_coco` network as our base model. For the detailed set up, please follow the steps:
 
 * Download: with the link, you could download the [ssd_inception_v2_coco](http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2017_11_17.tar.gz), please unzip and move the folder under HF.
 
