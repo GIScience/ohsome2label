@@ -36,7 +36,7 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 import logging
 
-from utils import dataset_util
+import dataset_util
 
 flags = tf.app.flags
 flags.DEFINE_string('label_input', '', 'Root directory to image and annotation.')
