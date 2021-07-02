@@ -153,9 +153,9 @@ def dict_to_coco_example(img_data):
 
 
 def main(_):
-    imgs_dir = os.path.join(FLAGS.label_input, 'image')
+    imgs_dir = os.path.join(FLAGS.label_input, 'images')
     preview_dir = os.path.join(FLAGS.label_input, 'preview')
-    annotations_filepath = os.path.join(FLAGS.label_input, 'annotation', 'geococo.json')
+    annotations_filepath = os.path.join(FLAGS.label_input, 'annotations', 'geococo.json')
     print("Convert coco val file to tf record")
     coco_data = load_coco_dection_dataset(imgs_dir, preview_dir, annotations_filepath, shuffle_img=True)
     clean_image(imgs_dir, preview_dir,
