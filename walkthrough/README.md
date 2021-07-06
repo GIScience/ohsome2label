@@ -123,18 +123,18 @@ $ ohsome2label visualize -t overlay
 
 #### Covert training record
 
-Copy [tf_record_from_coco.py from this repo](tf_record_from_coco.py) to the `./ohsome2label/` directory
+Copy [tf_record_from_coco.py together with dataset_util.py](tf_record_from_coco.py) to the `./ohsome2label/` directory where you have your `./tanzania` data folder.
 
 * Generate TFRecords:
 
 ```shell
 $ python tf_record_from_coco.py  
-    --label_input=ohsome2label/tanzania 
-    --train_rd_path=ohsome2label/tanzania/train.record 
-    --valid_rd_path=ohsome2label/tanzania/valid.record
+    --label_input=./tanzania 
+    --train_rd_path=./tanzania/train.record 
+    --valid_rd_path=./tanzania/valid.record
 ```
 
-Once you've successfully run these command, you can find `train.record` and `test.record` files in `./ohsome2label/tanzania/`. Next step, please copy those two .record files into the cloned repo of `models/research/object_detection/data`. 
+Once you've successfully run these command, you can find `train.record` and `test.record` files in `./tanzania/`. Next step, please copy those two .record files into the cloned repo of `models/research/object_detection/data`. 
 
 Additionally, you may find training and test images `ohsome/tanzania/train/` and `ohsome/tanzania/test/`, respectively. Please copy it to the `models/research/object_detection/image`.
 
