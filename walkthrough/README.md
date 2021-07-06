@@ -47,11 +47,10 @@ osm:
   api: ohsome
   url: https://api.ohsome.org/v1/elements/geometry
   bboxes: [32.463226318359375, -5.032122934090069, 32.48931884765625, -5.019810836520875]
-
-tags:
-  - {'label': 'building', 'key': 'building', 'value': ''}
-  timestamp: 2020-10-20
-  types: polygon
+  tags:
+    - {'label': 'building', 'key': 'building', 'value': ''}
+    timestamp: 2020-10-20
+    types: polygon
 
 image:
   img_api: bing
