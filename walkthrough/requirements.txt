@@ -1,0 +1,6 @@
+pycurl
+pandas
+tensorflow==1.14.0
+Cython
+matplotlib
+jupyter
