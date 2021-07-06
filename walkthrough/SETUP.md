@@ -44,7 +44,7 @@ pip install -r requirements.txt
 export PYCURL_SSL_LIBRARY=gnutls
 pip install --no-cache-dir pycurl
 pip install pandas
-pip install tensorflow
+pip install tensorflow==1.14.0
 pip install Cython
 pip install jupyter
 pip install matplotlib
