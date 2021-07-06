@@ -31,6 +31,18 @@ For the details of package dependencies installation, please follow the steps in
 
 Since we noticed several finished humanitarian mapping project in kalola area, Tanzania. In this walkthrough, we will use the kalola area as an example and demonstrate how to use [ohsome2label](https://github.com/GIScience/ohsome2label/tree/master/ohsome2label) to prepare training samples for building detection model.
 
+#### Install the ohsome2label
+
+Clone the [ohsome2label](https://github.com/GIScience/ohsome2label) Github repo with
+
+ ``` 
+ git clone https://github.com/GIScience/ohsome2label.git
+ ``` 
+
+and install it locally
+ ``` 
+ pip install --editable .
+ ``` 
 
 #### Configuration
 
