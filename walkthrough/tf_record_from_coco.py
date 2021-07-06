@@ -20,7 +20,7 @@ Example usage:
              --train_rd_path=data/train_xxx.record \
              --valid_rd_path=data/valid_xxx.record
 
-    python tf_record_from_coco.py --label_input=.\malawi_test --train_rd_path=malawi_test\train.record --valid_rd_path=malawi_test\valid.record
+    python tf_record_from_coco.py --label_input=.\tanzania --train_rd_path=tanzania\train.record --valid_rd_path=tanzania\valid.record
 
 """
 
@@ -66,13 +66,11 @@ def clean_image(imgs_dir, preview_dir, annotations_filepath):
             os.remove(img_path)
 
 
-def load_coco_dection_dataset(imgs_dir, preview_dir, annotations_filepath, shuffle_img=False):
+def load_coco_dection_dataset(imgs_dir, annotations_filepath):
     """Load data from dataset by pycocotools. This tools can be download from "http://mscoco.org/dataset/#download"
     Args:
         imgs_dir: directories of coco images
-        preview_dir: preselection of images samples
         annotations_filepath: file path of coco annotations file
-        shuffle_img: wheter to shuffle images order
     Return:
         coco_data: list of dictionary format information of each image
     """
@@ -109,8 +107,8 @@ def load_coco_dection_dataset(imgs_dir, preview_dir, annotations_filepath, shuff
             entity.append(cats.encode('utf8'))
 
         img_path = os.path.join(imgs_dir, img_detail['file_name'])
-        preview_path = os.path.join(preview_dir, img_detail['file_name'])
-        if os.path.isfile(preview_path):
+        #preview_path = os.path.join(preview_dir, img_detail['file_name'])
+        if os.path.isfile(img_path):
             img_bytes = tf.gfile.FastGFile(img_path, 'rb').read()
             img_info['pixel_data'] = img_bytes
             img_info['height'] = pic_height
@@ -153,13 +151,13 @@ def dict_to_coco_example(img_data):
 
 
 def main(_):
-    imgs_dir = os.path.join(FLAGS.label_input, 'image')
+    imgs_dir = os.path.join(FLAGS.label_input, 'images')
     preview_dir = os.path.join(FLAGS.label_input, 'preview')
-    annotations_filepath = os.path.join(FLAGS.label_input, 'annotation', 'geococo.json')
+    annotations_filepath = os.path.join(FLAGS.label_input, 'annotations', 'geococo.json')
     print("Convert coco val file to tf record")
-    coco_data = load_coco_dection_dataset(imgs_dir, preview_dir, annotations_filepath, shuffle_img=True)
-    clean_image(imgs_dir, preview_dir,
-                annotations_filepath)  # optional funtion of delecting bad samples in the preview folder
+    coco_data = load_coco_dection_dataset(imgs_dir, annotations_filepath)
+    #clean_image(imgs_dir, preview_dir,
+    #            annotations_filepath)  # optional funtion of delecting bad samples in the preview folder
     total_imgs = len(coco_data)
     split_index = int(total_imgs * 0.8)
     coco_data_train = coco_data[:split_index]
