@@ -26,6 +26,8 @@ Example usage:
 
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
 from pycocotools.coco import COCO
 from PIL import Image
@@ -35,6 +37,8 @@ import shutil
 import numpy as np
 import tensorflow.compat.v1 as tf
 import logging
+from os import makedirs
+import shutil
 
 import dataset_util
 
@@ -116,6 +120,7 @@ def load_coco_dection_dataset(imgs_dir, annotations_filepath):
             img_info['bboxes'] = bboxes
             img_info['labels'] = labels
             img_info['text'] = entity
+            img_info['file'] = img_detail['file_name']
             coco_data.append(img_info)
     return coco_data
 
@@ -146,6 +151,7 @@ def dict_to_coco_example(img_data):
         'image/object/class/text': dataset_util.bytes_list_feature(img_data['text']),
         'image/encoded': dataset_util.bytes_feature(img_data['pixel_data']),
         'image/format': dataset_util.bytes_feature('jpeg'.encode('utf-8')),
+        'image/object/class/file': dataset_util.bytes_feature(img_data['file'].encode('utf-8')),
     }))
     return example
 
@@ -162,6 +168,22 @@ def main(_):
     split_index = int(total_imgs * 0.8)
     coco_data_train = coco_data[:split_index]
     coco_data_validation = coco_data[split_index:]
+    train_dir = os.path.join(FLAGS.label_input, 'train')
+    test_dir = os.path.join(FLAGS.label_input, 'test')
+    if not os.path.isdir(train_dir):
+        makedirs(train_dir)
+    if not os.path.isdir(test_dir):
+        makedirs(test_dir)
+
+    for train_tile in coco_data_train:
+        file = train_tile['file']
+        tile_dir = os.path.join(imgs_dir, file)
+        shutil.copy(tile_dir, train_dir)
+
+    for valid_tile in coco_data_validation:
+        file = valid_tile['file']
+        tile_dir = os.path.join(imgs_dir, file)
+        shutil.copy(tile_dir, test_dir)
 
     # write coco data to tf record
     with tf.python_io.TFRecordWriter(FLAGS.train_rd_path) as tfrecord_writer:
