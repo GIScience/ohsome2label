@@ -129,8 +129,8 @@ Copy [tf_record_from_coco.py together with dataset_util.py](tf_record_from_coco.
 
 ```shell
 $ python tf_record_from_coco.py  
-    --label_input=./tanzania 
-    --train_rd_path=./tanzania/train.record 
+    --label_input=./tanzania \
+    --train_rd_path=./tanzania/train.record \
     --valid_rd_path=./tanzania/valid.record
 ```
 
@@ -253,11 +253,11 @@ To perform the coordinate transformation, and obtain precision, recall and f1-sc
 
 ```shell
 python tf_od_performance_evaluation.py 
-    --path_to_osm ohsome2label/tanzania/other/raw/building_building_.geojson 
-    --test_image_path images/test/
-    --predictions_path prediction_result/OD_prediction.geojson 
-    --noresults_to_file 
-    --geometries_to_file  
+    --path_to_osm ohsome2label/tanzania/other/raw/building_building_.geojson \
+    --test_image_path images/test/ \
+    --predictions_path prediction_result/OD_prediction.geojson \
+    --noresults_to_file \
+    --geometries_to_file  \
     --geometries_output_folder prediction_result/
 ```
 
