@@ -12,9 +12,9 @@ venv
 *.mypy*
 dist/
 .tmux
-!example_result
 HD
 areaKeys.json
 .vscode
 build
 tmp_code
+!example_result/*.png

@@ -3,7 +3,7 @@
     "url" : "https://ohsome.org/copyrights",
     "text" : "© OpenStreetMap contributors"
   },
-  "apiVersion" : "0.9",
+  "apiVersion" : "1.5.0",
   "type" : "FeatureCollection",
   "features" : []
 }
