@@ -17,4 +17,4 @@ areaKeys.json
 .vscode
 build
 tmp_code
-!example_result/*.png
+!example_result/*/*
