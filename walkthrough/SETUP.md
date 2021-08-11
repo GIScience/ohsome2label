@@ -22,7 +22,7 @@ Here, we already put the folder into this repository.
 
 As alternative, you could also clone it by yourself. (Unecessary)
 ``` shell
-git clone https://github.com/bobleegogogo/models.git
+git clone https://github.com/bobleegogogo/TF_objectdetection
 ```
 
 
