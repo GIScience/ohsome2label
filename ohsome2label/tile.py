@@ -258,7 +258,7 @@ def tile_get_transform(tile, nx=256, ny=256):
 def bbox_get_transform(bbox, nx=256, ny=256):
     """Calculate geoTransform for bbox
 
-    :param bbox: bounding box 
+    :param bbox: bounding box
     :param nx: tile width pixel size
     :param ny: tile height pixel size
     """
@@ -269,6 +269,12 @@ def bbox_get_transform(bbox, nx=256, ny=256):
 
 
 def apply_transform(coords, trans):
-    """transform coordinates according"""
+    """transform coordinates according transformation matrix to get image-based
+    local coordinate
+
+    :param coords: coordinates
+    :param trans: translation to get image-based coordinate system coordinate
+
+    """
     coords = [((x - trans[0]) / trans[1], (y - trans[3]) / trans[5]) for x, y in coords]
     return coords

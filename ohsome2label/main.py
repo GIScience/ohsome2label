@@ -4,7 +4,7 @@ import click
 from tqdm import tqdm
 
 from ohsome2label.config import Config, Parser, workspace
-from ohsome2label.label import gen_label
+from ohsome2label.label import gen_label, get_tile_list
 from ohsome2label.overpass import overpass_download
 from ohsome2label.utils import download_osm, download_img
 from ohsome2label.visualize import visualize_combined, visualize_overlay
@@ -58,6 +58,15 @@ def vector(config):
 
 @cli.command(help="Generate tile")
 @click.pass_obj
+def tile(config):
+    cfg = config.o2l_cfg
+    workspace = config.workspace
+    print("Tile the OSM data into given zoom level:", cfg.zoom)
+    get_tile_list(cfg, workspace)
+
+
+@cli.command(help="Generate tile")
+@click.pass_obj
 def label(config):
     cfg = config.o2l_cfg
     workspace = config.workspace
@@ -99,6 +108,7 @@ def visualize(config, num, type):
             )
         else:
             print("Please check your type input!")
+
 
 @cli.command(help="Generate OSM quality figure")
 # @pass_config

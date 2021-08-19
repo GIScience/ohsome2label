@@ -10,7 +10,14 @@ from shapely.strtree import STRtree
 from tqdm import tqdm
 
 from ohsome2label.palette import palette
-from ohsome2label.tile import Bbox, apply_transform, get_bbox, tile_get_transform, xy
+from ohsome2label.tile import (
+    Bbox,
+    Tile,
+    apply_transform,
+    get_bbox,
+    tile_get_transform,
+    xy,
+)
 from ohsome2label.utils import get_area
 
 nx = 256
@@ -86,6 +93,9 @@ def check_topo(feats, tile, nx=256, ny=256):
     :param nx: image width
     :param ny: image length
     """
+    # import pdb
+
+    # pdb.set_trace()
     trans = tile_get_transform(tile, nx, ny)
     bbox = box(0, 0, 255, 255)
 
@@ -159,74 +169,13 @@ def burn_tile(geoms, task, pal, fname, nx=256, ny=256):
     im.save(fname, "PNG")
 
 
-class geococo(object):
-    """ class for generate geo coco
-    https://www.immersivelimit.com/tutorials/create-coco-annotations-from-scratch
-    """
-
-    def __init__(self, config):
-        self.tags_to_cats(config.tags)
-
-        # coco info
-        info = {}
-        info["description"] = config.name
-        info["date_created"] = datetime.now().strftime("%Y/%m/%d")
-        self.info = info
-
-        # coco licenses
-        self.lic = [
-            {
-                "url": "http://creativecommons.org/licenses/by/2.0/",
-                "id": 4,
-                "name": "Attribution License",
-            }
-        ]
-
-        self.imgs = []
-        self.annos = []
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *exc):
-        return True
-
-    def tags_to_cats(self, tags):
-        """Convert tags to coco categories."""
-        self.catIdxs = {}
-        self.cats = []
-
-        _label = {}
-        for tag in tags:
-            if tag["label"] not in _label:
-                _label[tag["label"]] = len(_label)
-
-        for tag in tags:
-            cat = {}
-            cat["supercategory"] = tag["label"]
-            cat["id"] = _label[tag["label"]]+1
-            cat["name"] = tag["label"]
-            self.cats.append(cat)
-            self.catIdxs[tag["label"]] = cat["id"]
-
-    def to_json(self):
-        coco = {}
-        coco["info"] = self.info
-        coco["licenses"] = self.lic
-        coco["images"] = self.imgs
-        coco["annotations"] = self.annos
-        coco["categories"] = self.cats
-        return coco
-
-
-def gen_label(cfg, workspace):
-    """Generate label and annotations in coco format
-
+def get_tile_list(cfg, workspace):
+    """Get potential label list according to the osm geojson
+    
     :param cfg: ohsome2label config
     :param workspace: workspace
     """
     tile_dir = workspace.tile
-    img_dir = workspace.label
     geoms = []
     feats = {}
     tile_feats = {}
@@ -286,43 +235,133 @@ def gen_label(cfg, workspace):
     # free the variable for gc
     del feats
 
+    list_path = os.path.join(workspace.other, "tile_list")
+    with open(list_path, "w", encoding="utf-8") as f:
+        for imgIdx, tile in tqdm(enumerate(tile_feats)):
+            feats = tile_feats[tile]
+
+            # store geojson
+            fc = FeatureCollection(feats)
+            tile_name = "{0.z}.{0.x}.{0.y}".format(tile)
+            f.write(tile_name + "\n")
+            tile_path = os.path.join(tile_dir, tile_name + ".geojson")
+            with open(tile_path, "w", encoding="utf-8") as gj:
+                try:
+                    geojson.dump(fc, gj)
+                except Exception:
+                    print("{}.geojson dump wrong!".format(tile_name))
+                    assert 0
+
+
+class geococo(object):
+    """ class for generate geo coco
+    https://www.immersivelimit.com/tutorials/create-coco-annotations-from-scratch
+    """
+
+    def __init__(self, config):
+        self.tags_to_cats(config.tags)
+
+        # coco info
+        info = {}
+        info["description"] = config.name
+        info["date_created"] = datetime.now().strftime("%Y/%m/%d")
+        self.info = info
+
+        # coco licenses
+        self.lic = [
+            {
+                "url": "http://creativecommons.org/licenses/by/2.0/",
+                "id": 4,
+                "name": "Attribution License",
+            }
+        ]
+
+        self.imgs = []
+        self.annos = []
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return True
+
+    def tags_to_cats(self, tags):
+        """Convert tags to coco categories."""
+        self.catIdxs = {}
+        self.cats = []
+
+        _label = {}
+        for tag in tags:
+            if tag["label"] not in _label:
+                _label[tag["label"]] = len(_label)
+
+        for tag in tags:
+            cat = {}
+            cat["supercategory"] = tag["label"]
+            cat["id"] = _label[tag["label"]] + 1
+            cat["name"] = tag["label"]
+            self.cats.append(cat)
+            self.catIdxs[tag["label"]] = cat["id"]
+
+    def to_json(self):
+        coco = {}
+        coco["info"] = self.info
+        coco["licenses"] = self.lic
+        coco["images"] = self.imgs
+        coco["annotations"] = self.annos
+        coco["categories"] = self.cats
+        return coco
+
+
+def gen_label(cfg, workspace):
+    """Generate label and annotations in coco format
+
+    :param cfg: ohsome2label config
+    :param workspace: workspace
+    """
+    img_dir = workspace.img
+    label_dir = workspace.label
+    tile_dir = workspace.tile
+    list_path = os.path.join(workspace.other, "tile_list")
+    geoms = []
+    feats = {}
+
     pal = palette(cfg.tags, os.path.join(workspace.other, "colors"))
-
     cocoPath = os.path.join(workspace.anno, "geococo.json")
-    with open(cocoPath, "w", encoding="utf-8") as f:
-        with geococo(cfg) as coco:
-            for imgIdx, tile in tqdm(enumerate(tile_feats)):
-                feats = tile_feats[tile]
+    with open(list_path, "r", encoding="utf-8") as lf:
+        with open(cocoPath, "w", encoding="utf-8") as f:
+            with geococo(cfg) as coco:
+                # for imgIdx, tile_name in enumerate(lf):
+                #     tile_name = tile_name.strip(".\n") + ".geojson"
+                #     tile_path = os.path.join(tile_dir, tile_name)
 
-                # store geojson
-                fc = FeatureCollection(feats)
-                tile_name = "{0.z}.{0.x}.{0.y}".format(tile)
-                tile_path = os.path.join(tile_dir, tile_name + ".geojson")
-                img_path = os.path.join(img_dir, tile_name + ".png") # default image extension of .png
-                with open(tile_path, "w", encoding="utf-8") as gj:
-                    try:
-                        geojson.dump(fc, gj)
-                    except Exception:
-                        print("{}.geojson dump wrong!".format(tile_name))
-                        assert 0
-
-                # burn tile
-                img = {}
-                img["id"] = imgIdx
-                img["width"] = nx
-                img["height"] = ny
-                img["file_name"] = tile_name + ".png"
-                coco.imgs.append(img)
-                geoms = check_topo(feats, tile, nx, ny)
-                burned_feats = burn_tile(geoms, cfg.task, pal, img_path, nx, ny)
-                base_idx = len(coco.annos)
-                for idx, label, coords in burned_feats:
-                    catIdx = coco.catIdxs[label]
-                    try:
-                        coco.annos.append(
-                            gen_anno(coords, base_idx + idx, imgIdx, catIdx)
+                for imgIdx, tile_name in enumerate(os.listdir(img_dir)):
+                    zoom, tx, ty = [_ for _ in tile_name.split(".")[:3]]
+                    tile = Tile(int(tx), int(ty), int(zoom))
+                    geojson_path = os.path.join(
+                        tile_dir, tile_name.replace("png", "geojson")
+                    )
+                    label_path = os.path.join(label_dir, tile_name)
+                    with open(geojson_path) as gj:
+                        feats = geojson.loads(gj.read().replace("'", ""))["features"]
+                        img = {}
+                        img["id"] = imgIdx
+                        img["width"] = nx
+                        img["height"] = ny
+                        img["file_name"] = tile_name
+                        coco.imgs.append(img)
+                        geoms = check_topo(feats, tile, nx, ny)
+                        burned_feats = burn_tile(
+                            geoms, cfg.task, pal, label_path, nx, ny
                         )
-                    except Exception:
-                        print(imgIdx)
+                        base_idx = len(coco.annos)
+                        for idx, label, coords in burned_feats:
+                            catIdx = coco.catIdxs[label]
+                            try:
+                                coco.annos.append(
+                                    gen_anno(coords, base_idx + idx, imgIdx, catIdx)
+                                )
+                            except Exception:
+                                print(imgIdx)
 
-            json.dump(coco.to_json(), f, indent=2)
+                    json.dump(coco.to_json(), f, indent=2)

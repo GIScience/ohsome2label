@@ -44,8 +44,8 @@ class palette:
         """get palette colors"""
         return self._colors[str(label)]
 
-    def load(self, path=''):
-        if path == '':
+    def load(self, path=""):
+        if path == "":
             path = self.path
         with open(path, "r") as f:
             self._colors = json.load(f)

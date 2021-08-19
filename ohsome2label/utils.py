@@ -13,6 +13,11 @@ class RequestError(Exception):
 
 
 def get_area(x, y):
+    """Calculate the area of polygon
+
+    param x: x coordinate array of the polygon
+    param y: y coordinate array of the polygon
+    """
     return 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
 
 
@@ -23,7 +28,7 @@ def download(fpath, api, params={}, retry=5):
         if r.status_code == 200:
             with open(fpath, "wb") as f:
                 f.write(r.content)
-        elif retry > 0: 
+        elif retry > 0:
             retry -= 1
             download(fpath, api, params, retry)
         else:
@@ -40,6 +45,11 @@ def download(fpath, api, params={}, retry=5):
 
 
 def download_osm(cfg, workspace):
+    """Download osm according to config
+
+    param cfg: config from config.yaml
+    param workspace: workspace to store osm data
+    """
     url = cfg.url
     params = {
         "bboxes": "{},{},{},{}".format(*cfg.bboxes),
@@ -71,15 +81,17 @@ def download_img(cfg, workspace):
     For custom, only support x,y,z and token in img_url
 
 
-    Args:
-        cfg (ohsome2label.config.o2l_config): o2l_config
-        workspace (ohsome2label.config.workspace): workspace
+    param cfg: ohsome2label.config.o2l_config
+    param workspace: ohsome2label.config.workspace
     """
     tgt_dir = workspace.img
-    tiles = os.listdir(workspace.label)
+    tile_list = os.path.join(workspace.other, "tile_list")
+    tiles = []
+    with open(tile_list, "r") as tl:
+        tiles = [_.replace("\n", "") for _ in tl]
     api = cfg.img_api.lower()
     for tile in tqdm(tiles):
-        z, x, y = tile.split(".")[0:3]
+        z, x, y = [int(_) for _ in tile.split(".")]
         tile = Tile(x, y, z)
         baseURL = cfg.img_url
         if api == "mapbox":
@@ -109,7 +121,12 @@ def valid_coco():
 
 
 def tile_coords_and_zoom_to_quadKey(x, y, zoom):
-    """Create a quadkey for use with certain tileservers that use them."""
+    """Create a quadkey for use with certain tileservers that use them.
+
+    param x: x index
+    param y: y index
+    param zoom: zoom level
+    """
     quadKey = ""
     for i in range(zoom, 0, -1):
         digit = 0
