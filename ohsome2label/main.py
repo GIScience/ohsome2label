@@ -56,7 +56,7 @@ def vector(config):
         overpass_download(cfg, workspace)
 
 
-@cli.command(help="Generate tile")
+@cli.command(help="Clip osm data into tile contains desired label")
 @click.pass_obj
 def tile(config):
     cfg = config.o2l_cfg
@@ -65,7 +65,7 @@ def tile(config):
     get_tile_list(cfg, workspace)
 
 
-@cli.command(help="Generate tile")
+@cli.command(help="Generate label")
 @click.pass_obj
 def label(config):
     cfg = config.o2l_cfg
