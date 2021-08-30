@@ -11,12 +11,15 @@ Author: Zhaoyan Wu
 """
 import json
 import os
+import logging
 from collections import defaultdict
 
 import geojson
 import requests
 from shapely.geometry import Polygon
 from shapely.geometry.polygon import orient
+
+log = logging.getLogger("__name__")
 
 _polygon_features_file = os.path.join(
     os.path.dirname(__file__), "polygon-features.json"
@@ -62,7 +65,7 @@ def way_to_geometry(way):
     if coords[0] == coords[-1]:
         return geojson.Polygon([coords])
     else:
-        print("way/{} is not a polygon".format(way["id"]))
+        log.error("way/{} is not a polygon".format(way["id"]))
         return None
 
 
@@ -117,13 +120,13 @@ def rel_to_geometry(rel):
                 else:
                     part_inners.append(coords)
             else:
-                print("check rel/{}, member's role is ilegal".format(rel["id"]))
+                log.error("check rel/{}, member's role is ilegal".format(rel["id"]))
                 return None
         elif member["type"] == "relation":
-            print("Not support rel member")
+            log.error("Not support rel member")
             continue
         else:
-            print("Only support way member")
+            log.error("Only support way member")
             continue
 
     part_outers = make_ring(part_outers)
@@ -132,17 +135,17 @@ def rel_to_geometry(rel):
         if part[0] == part[-1]:
             outers.append(Polygon(part))
         else:
-            print("rel/{} outer is not complete".format(rel["id"]))
+            log.error("rel/{} outer is not complete".format(rel["id"]))
             continue
 
     for part in part_inners:
         if part[0] == part[-1]:
             inners.append(Polygon(part))
         else:
-            print("member is not a polygon")
+            log.error("member is not a polygon")
 
     if len(outers) == 0:
-        print("outer is None, wrong")
+        log.error("outer is None, wrong")
         return None
 
     polys = []
@@ -286,7 +289,7 @@ class overpass(object):
         try:
             r = requests.post(self.endpoint, data=overpass_ql)
         except requests.exceptions.Timeout:
-            print(r.url)
+            log.error(r.url)
             raise Exception
 
         return r

@@ -165,15 +165,15 @@ class workspace(object):
                 os.makedirs(path, exist_ok=True)
 
 
-def main():
-    from ohsome2label import tile
+# def main():
+#     from ohsome2label import tile
 
-    cfg = r"./config/config.yaml"
-    schema = r"./config/schema.yaml"
-    p = Parser(cfg, schema)
-    config = p.parse()
-    print(tile.Bbox(*config.bboxes))
+#     cfg = r"./config/config.yaml"
+#     schema = r"./config/schema.yaml"
+#     p = Parser(cfg, schema)
+#     config = p.parse()
+#     print(tile.Bbox(*config.bboxes))
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

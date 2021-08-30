@@ -1,12 +1,13 @@
 import os
 
 import click
-from tqdm import tqdm
+import logging
 
 from ohsome2label.config import Config, Parser, workspace
 from ohsome2label.label import gen_label, get_tile_list
 from ohsome2label.overpass import overpass_download
 from ohsome2label.utils import download_osm, download_img
+from ohsome2label.logger import TqdmLoggingHandler
 from ohsome2label.visualize import visualize_combined, visualize_overlay
 from ohsome2label.quality import get_osm_quality
 
@@ -14,6 +15,15 @@ pass_config = click.make_pass_decorator(Config, ensure=True)
 
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(levelname)s]\t%(asctime)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[TqdmLoggingHandler()],
+)
+log = logging.getLogger(__name__)
 
 
 class CliConfig(object):
@@ -42,7 +52,7 @@ def cli(ctx, verbose, config, schema):
 @cli.command(help="Download vector OSM data from ohsomeAPI")
 @click.pass_obj
 def vector(config):
-    print(
+    log.info(
         "Download OSM historical data into dir:\n{}".format(
             os.path.abspath(config.workspace.raw)
         )
@@ -61,7 +71,7 @@ def vector(config):
 def tile(config):
     cfg = config.o2l_cfg
     workspace = config.workspace
-    print("Tile the OSM data into given zoom level:", cfg.zoom)
+    log.info("Tile the OSM data into given zoom level: {}".format(cfg.zoom))
     get_tile_list(cfg, workspace)
 
 
@@ -70,7 +80,7 @@ def tile(config):
 def label(config):
     cfg = config.o2l_cfg
     workspace = config.workspace
-    print("Tile the OSM data into given zoom level:", cfg.zoom)
+    log.info("Tile the OSM data into given zoom level: {}".format(cfg.zoom))
     gen_label(cfg, workspace)
 
 
@@ -80,12 +90,12 @@ def image(config):
     cfg = config.o2l_cfg
     if config.verbose:
         pass  # add output later
-    print("Start download satellite image!")
+    log.info("Start download satellite image!")
     download_img(cfg, config.workspace)
 
 
 @cli.command(help="Visualize of training samples")
-@click.option("--num", "-n", type=int, default=50)
+@click.option("--num", "-n", type=int, default=10)
 @click.option("--type", "-t", type=str, default="combined")
 # @pass_config
 @click.pass_obj
@@ -94,20 +104,23 @@ def visualize(config, num, type):
     workspace = config.workspace
     if config.verbose:
         pass  # add output later
-    print("start visualize {} pictures!".format(num))
+    log.info("start visualize {} pictures in {} type!".format(num, type))
     if type == "combined":
         visualize_combined(workspace, num)
-        print(
+        log.info(
             "Visualization mode: combined the satellite image with OpenStreetMap features."
         )
     else:
         if type == "overlay":
             visualize_overlay(workspace, num)
-            print(
+            log.info(
                 "Visualization mode: overlay the satellite image with OpenStreetMap features."
             )
         else:
-            print("Please check your type input!")
+            pass
+            log.error(
+                "Wrong visualization type {}. Please check your type!".format(type)
+            )
 
 
 @cli.command(help="Generate OSM quality figure")

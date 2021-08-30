@@ -1,4 +1,4 @@
-__version__ = '1.1.2'
+__version__ = "1.1.2"
 from .config import *
 from .utils import *
 from .label import *
@@ -7,3 +7,4 @@ from .visualize import *
 from .palette import palette
 from .overpass import *
 from .quality import *
+from .logger import *

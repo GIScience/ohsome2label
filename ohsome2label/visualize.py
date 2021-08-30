@@ -19,7 +19,6 @@ def visualize_combined(workspace, num):
         os.makedirs(preview_dir)
     fileist = [file for file in os.listdir(img_dir) if file.endswith(".png")]
     num = num if num <= len(fileist) else len(fileist)
-    print(num)
     for i in range(num):
         file = fileist[i]
         f_img = os.path.join(img_dir, file)

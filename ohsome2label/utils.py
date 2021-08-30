@@ -1,11 +1,38 @@
 import os
 
 import numpy as np
+from requests import exceptions
+from requests.models import HTTPError
+from urllib3.util.retry import Retry
 import requests
 import time
-from tqdm import tqdm
+import logging
+import tqdm
 
 from ohsome2label.tile import Tile, get_xy_bbox
+
+
+class TqdmLoggingHandler(logging.Handler):
+    def __init__(self, level=logging.NOTSET):
+        super().__init__(level)
+
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            tqdm.tqdm.write(msg)
+            self.flush()
+        except Exception:
+            self.handleError(record)
+
+
+log = logging.getLogger(__name__)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(levelname)s]\t%(asctime)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[TqdmLoggingHandler()],
+)
 
 
 class RequestError(Exception):
@@ -21,27 +48,33 @@ def get_area(x, y):
     return 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
 
 
-def download(fpath, api, params={}, retry=5):
+def retries_session(retries=0):
+    session = requests.Session()
+    adapter = requests.adapters.HTTPAdapter(max_retries=retries)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    return session
+
+
+def download(fpath, api, params={}, retries=0):
     """Download with url and params"""
+    session = retries_session(retries)
+    # if r.status_code == 200:
     try:
-        r = requests.get(api, params)
-        if r.status_code == 200:
+        r = session.get(url=api, params=params)
+        if not r.raise_for_status():
             with open(fpath, "wb") as f:
                 f.write(r.content)
-        elif retry > 0:
-            retry -= 1
-            download(fpath, api, params, retry)
         else:
-            print(r.url)
-            raise RequestError("Request Error {}".format(r.status_code))
-    except requests.ConnectionError:
-        print("ERROR ConnectionError")
-        if retry > 0:
-            time.sleep(30)
-            retry -= 1
-            download(fpath, api, params, retry)
-        else:
-            print("Retry execced max time")
+            raise requests.exceptions.HTTPError
+    except requests.exceptions.HTTPError as e:
+        # log.error("Retry execced max time, please check API or try it later")
+        log.warning(
+            "Download error. %s\nPlease check your bboxes boundary or try it later" % e
+        )
+    except requests.exceptions.ConnectionError as e:
+        # log.error("ConnectionError, please check API")
+        log.warning("Connection error. %s" % e)
 
 
 def download_osm(cfg, workspace):
@@ -58,7 +91,7 @@ def download_osm(cfg, workspace):
         "properties": cfg.properties,
     }
     tgt_dir = workspace.raw
-    for tag in tqdm(cfg.tags):
+    for tag in tqdm.tqdm(cfg.tags):
         fname = "{label}_{k}_{v}.geojson".format(
             label=tag["label"], k=tag["key"], v=tag["value"]
         )
@@ -90,7 +123,7 @@ def download_img(cfg, workspace):
     with open(tile_list, "r") as tl:
         tiles = [_.replace("\n", "") for _ in tl]
     api = cfg.img_api.lower()
-    for tile in tqdm(tiles):
+    for tile in tqdm.tqdm(tiles):
         z, x, y = [int(_) for _ in tile.split(".")]
         tile = Tile(x, y, z)
         baseURL = cfg.img_url

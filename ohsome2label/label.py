@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+import logging
 
 import geojson
 from geojson import FeatureCollection
@@ -22,6 +23,8 @@ from ohsome2label.utils import get_area
 
 nx = 256
 ny = 256
+
+log = logging.getLogger(__name__)
 
 
 class TaskError(Exception):
@@ -171,7 +174,7 @@ def burn_tile(geoms, task, pal, fname, nx=256, ny=256):
 
 def get_tile_list(cfg, workspace):
     """Get potential label list according to the osm geojson
-    
+
     :param cfg: ohsome2label config
     :param workspace: workspace
     """
@@ -249,7 +252,7 @@ def get_tile_list(cfg, workspace):
                 try:
                     geojson.dump(fc, gj)
                 except Exception:
-                    print("{}.geojson dump wrong!".format(tile_name))
+                    log.error("{}.geojson dump wrong!".format(tile_name))
                     assert 0
 
 
@@ -362,6 +365,6 @@ def gen_label(cfg, workspace):
                                     gen_anno(coords, base_idx + idx, imgIdx, catIdx)
                                 )
                             except Exception:
-                                print(imgIdx)
+                                log.error(imgIdx)
 
                     json.dump(coco.to_json(), f, indent=2)
