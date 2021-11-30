@@ -1,6 +1,5 @@
 import logging
 import tqdm
-import requests
 
 
 class TqdmLoggingHandler(logging.Handler):

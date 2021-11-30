@@ -12,27 +12,7 @@ import tqdm
 from ohsome2label.tile import Tile, get_xy_bbox
 
 
-class TqdmLoggingHandler(logging.Handler):
-    def __init__(self, level=logging.NOTSET):
-        super().__init__(level)
-
-    def emit(self, record):
-        try:
-            msg = self.format(record)
-            tqdm.tqdm.write(msg)
-            self.flush()
-        except Exception:
-            self.handleError(record)
-
-
 log = logging.getLogger(__name__)
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(levelname)s]\t%(asctime)s: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    handlers=[TqdmLoggingHandler()],
-)
 
 
 class RequestError(Exception):
@@ -117,7 +97,7 @@ def download_img(cfg, workspace):
     param cfg: ohsome2label.config.o2l_config
     param workspace: ohsome2label.config.workspace
     """
-    tgt_dir = workspace.img
+    tgt_dir = workspace.tmp
     tile_list = os.path.join(workspace.other, "tile_list")
     tiles = []
     with open(tile_list, "r") as tl:

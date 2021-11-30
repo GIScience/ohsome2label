@@ -6,7 +6,7 @@ from PIL import Image
 
 def load_image(infilename):
     img = Image.open(infilename)
-    img.load()
+    img = img.convert("RGB")
     data = np.asarray(img)
     return data
 
@@ -17,10 +17,10 @@ def visualize_combined(workspace, num):
     preview_dir = workspace.preview
     if not os.path.exists(preview_dir):
         os.makedirs(preview_dir)
-    fileist = [file for file in os.listdir(img_dir) if file.endswith(".png")]
-    num = num if num <= len(fileist) else len(fileist)
+    filelist = [file for file in os.listdir(img_dir) if file.endswith(".png")]
+    num = num if num <= len(filelist) else len(filelist)
     for i in range(num):
-        file = fileist[i]
+        file = filelist[i]
         f_img = os.path.join(img_dir, file)
         f_label = os.path.join(label_dir, file)
         imagery = load_image(f_img)
@@ -37,16 +37,16 @@ def visualize_overlay(workspace, num):
     preview_dir = workspace.preview
     if not os.path.exists(preview_dir):
         os.makedirs(preview_dir)
-    fileist = [file for file in os.listdir(img_dir) if file.endswith(".png")]
-    num = num if num <= len(fileist) else len(fileist)
+    filelist = [file for file in os.listdir(img_dir) if file.endswith(".png")]
+    num = num if num <= len(filelist) else len(filelist)
     for i in range(num):
-        file = fileist[i]
+        file = filelist[i]
         f_img = os.path.join(img_dir, file)
         f_label = os.path.join(label_dir, file)
         imagery = Image.open(f_img)
         label = Image.open(f_label)
-        background = imagery.convert("RGBA")
-        overlay = label.convert("RGBA")
+        background = imagery.convert("RGB")
+        overlay = label.convert("RGB")
         overlay_image = Image.blend(background, overlay, 0.5)
         f_preview = os.path.join(preview_dir, file)
         overlay_image.save(f_preview)

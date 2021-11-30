@@ -157,6 +157,7 @@ class workspace(object):
         self.label = os.path.join(self.workspace, "labels")
         self.preview = os.path.join(self.workspace, "preview")
         self.raw = os.path.join(self.other, "raw")
+        self.tmp = os.path.join(self.other, "tmp")
         self.tile = os.path.join(self.other, "tile")
         self.quality = os.path.join(self.other, "quality")
         for directory in self.__dict__:

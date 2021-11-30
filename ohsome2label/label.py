@@ -8,7 +8,9 @@ from geojson import FeatureCollection
 from PIL import Image, ImageDraw
 from shapely.geometry import MultiPolygon, Polygon, box, shape
 from shapely.strtree import STRtree
-from tqdm import tqdm
+import itertools
+import shutil
+import tqdm
 
 from ohsome2label.palette import palette
 from ohsome2label.tile import (
@@ -53,7 +55,8 @@ def gen_anno(coords, idx, imgIdx, catIdx):
         seg.append(_y)
     anno["segmentation"] = [seg]
     anno["area"] = get_area(xs, ys)
-    anno["bbox"] = [max(xs), max(ys), min(xs), min(ys)]
+    anno["bbox"] = [min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)]
+    # log.info((imgIdx, catIdx))
     return anno
 
 
@@ -63,6 +66,23 @@ def expolde_multipolygon(multipoly):
         coords = list(poly.exterior.coords)
         coords_list.append(coords)
     return coords_list
+
+
+def trunc_polygon(coords, nx=256, ny=256):
+    """truncate the polygon according to the tile size
+    
+    :param coords: image-based coordinates
+    :param nx: image width
+    :param ny: image length
+    """
+    xs = [x for x, _ in coords]
+    xs = [_ if _ > 0 else 0 for _ in xs]
+    xs = [_ if _ < nx else nx for _ in xs]
+    ys = [y for _, y in coords]
+    ys = [_ if _ > 0 else 0 for _ in ys]
+    ys = [_ if _ < ny else ny for _ in ys]
+
+    return [(x, y) for x, y in zip(xs, ys)]
 
 
 def parse_polygon(coordinates, trans, nx=256, ny=256):
@@ -75,7 +95,7 @@ def parse_polygon(coordinates, trans, nx=256, ny=256):
     """
     exterior = coordinates[0]
     exterior = [xy(*coord) for coord in exterior]
-    exterior = apply_transform(exterior, trans)
+    exterior = trunc_polygon((apply_transform(exterior, trans)), nx, ny)
 
     if len(coordinates) > 1:
         interiors = coordinates[1:]
@@ -96,9 +116,6 @@ def check_topo(feats, tile, nx=256, ny=256):
     :param nx: image width
     :param ny: image length
     """
-    # import pdb
-
-    # pdb.set_trace()
     trans = tile_get_transform(tile, nx, ny)
     bbox = box(0, 0, 255, 255)
 
@@ -114,6 +131,8 @@ def check_topo(feats, tile, nx=256, ny=256):
         if geometry["type"] == "Polygon":
             coordinates = geometry["coordinates"]
             poly = parse_polygon(coordinates, trans, nx, ny)
+
+            # log.info(label)
             geoms.append((poly.area, poly, label))
         elif feat["geometry"]["type"] == "MultiPolygon":
             coordinates = geometry["coordinates"]
@@ -148,28 +167,31 @@ def burn_tile(geoms, task, pal, fname, nx=256, ny=256):
     draws = []
     im = Image.new(mode="RGB", size=(nx, ny), color="#000000")
     draw = ImageDraw.Draw(im)
+    i = 0
     for geom, label in geoms:
-        color = pal.color(label)
+        i += 1
         if task == "segmentation":
             if geom.type == "Polygon":
-                draws.append((list(geom.exterior.coords), color))
+                draws.append((list(geom.exterior.coords), label))
             elif geom.type == "MultiPolygon":
-                draws += [(list(g.exterior.coords), color) for g in geom]
+                draws += [(list(g.exterior.coords), label) for g in geom]
         elif task == "object detection":
             bbox = bounds_to_bbox(geom.bounds)
-            draws.append((bbox, color))
+            draws.append((bbox, label))
         else:
             raise TaskError
 
-    for idx, (coords, color) in enumerate(draws):
-        if task == "segmentation":
-            draw.polygon(coords, fill=color)
-        elif task == "object detection":
-            draw.line(coords)
+    if i != 0:
+        for idx, (coords, label) in enumerate(draws):
+            if task == "segmentation":
+                draw.polygon(coords, fill=pal.color(label))
+            elif task == "object detection":
+                draw.line(coords, fill=pal.color(label))
 
-        yield (idx, label, coords)
+            yield (idx, label, coords)
+        # log.warning("draw num:{}".format(idx))
 
-    im.save(fname, "PNG")
+        im.save(fname, "PNG")
 
 
 def get_tile_list(cfg, workspace):
@@ -240,7 +262,7 @@ def get_tile_list(cfg, workspace):
 
     list_path = os.path.join(workspace.other, "tile_list")
     with open(list_path, "w", encoding="utf-8") as f:
-        for imgIdx, tile in tqdm(enumerate(tile_feats)):
+        for imgIdx, tile in enumerate(tqdm.tqdm(tile_feats)):
             feats = tile_feats[tile]
 
             # store geojson
@@ -303,8 +325,11 @@ class geococo(object):
             cat["supercategory"] = tag["label"]
             cat["id"] = _label[tag["label"]] + 1
             cat["name"] = tag["label"]
-            self.cats.append(cat)
-            self.catIdxs[tag["label"]] = cat["id"]
+            if cat in self.cats:
+                continue
+            else:
+                self.cats.append(cat)
+                self.catIdxs[tag["label"]] = cat["id"]
 
     def to_json(self):
         coco = {}
@@ -322,6 +347,7 @@ def gen_label(cfg, workspace):
     :param cfg: ohsome2label config
     :param workspace: workspace
     """
+    tmp_dir = workspace.tmp
     img_dir = workspace.img
     label_dir = workspace.label
     tile_dir = workspace.tile
@@ -334,11 +360,8 @@ def gen_label(cfg, workspace):
     with open(list_path, "r", encoding="utf-8") as lf:
         with open(cocoPath, "w", encoding="utf-8") as f:
             with geococo(cfg) as coco:
-                # for imgIdx, tile_name in enumerate(lf):
-                #     tile_name = tile_name.strip(".\n") + ".geojson"
-                #     tile_path = os.path.join(tile_dir, tile_name)
-
-                for imgIdx, tile_name in enumerate(os.listdir(img_dir)):
+                imgIdx = 0
+                for tile_name in tqdm.tqdm(os.listdir(tmp_dir)):
                     zoom, tx, ty = [_ for _ in tile_name.split(".")[:3]]
                     tile = Tile(int(tx), int(ty), int(zoom))
                     geojson_path = os.path.join(
@@ -352,19 +375,28 @@ def gen_label(cfg, workspace):
                         img["width"] = nx
                         img["height"] = ny
                         img["file_name"] = tile_name
-                        coco.imgs.append(img)
                         geoms = check_topo(feats, tile, nx, ny)
                         burned_feats = burn_tile(
                             geoms, cfg.task, pal, label_path, nx, ny
                         )
-                        base_idx = len(coco.annos)
-                        for idx, label, coords in burned_feats:
-                            catIdx = coco.catIdxs[label]
-                            try:
-                                coco.annos.append(
-                                    gen_anno(coords, base_idx + idx, imgIdx, catIdx)
-                                )
-                            except Exception:
-                                log.error(imgIdx)
+                        burned_feats, _ = itertools.tee(burned_feats)
+                        if sum(1 for x in _) == 0:
+                            log.info("{} has no geometry, skip it!".format(tile))
+                        else:
+                            coco.imgs.append(img)
+                            base_idx = len(coco.annos)
+                            for idx, label, coords in burned_feats:
+                                catIdx = coco.catIdxs[label]
+                                try:
+                                    coco.annos.append(
+                                        gen_anno(coords, base_idx + idx, imgIdx, catIdx)
+                                    )
+                                except Exception:
+                                    log.warning(imgIdx)
+                            imgIdx += 1
+                            shutil.copy(
+                                os.path.join(tmp_dir, tile_name),
+                                os.path.join(img_dir, tile_name),
+                            )
 
-                    json.dump(coco.to_json(), f, indent=2)
+                json.dump(coco.to_json(), f, indent=2)
