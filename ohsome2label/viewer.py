@@ -6,7 +6,7 @@ import os
 
 from palette import palette
 
-pal = palette(path=r"E:\test\other\colors")
+pal = palette(path=r"..\example_result\other\colors")
 
 from PIL import Image, ImageTk
 
@@ -340,13 +340,13 @@ class Viewer:
         self.list_pw.zoom_button.bind("<Button-1>", self.zoom_in)
 
 
-img_path = "E:\\test\\images"
+img_path = "..\\example_result\\images"
 
 
 def main():
     root = tk.Tk()
     root.title("Ohsome2label Viewer")
-    coco_obj = COCO(r"E:/test/annotations/geococo.json")
+    coco_obj = COCO(r"../example_result/annotations/geococo.json")
     viewer = Viewer(root, coco_obj)
     # root.resizable(False, False)
     root.mainloop()
