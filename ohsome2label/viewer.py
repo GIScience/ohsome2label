@@ -4,9 +4,8 @@ import json
 import logging
 import os
 
-from palette import palette
+from ohsome2label.palette import palette
 
-pal = palette(path=r"..\example_result\other\colors")
 
 from PIL import Image, ImageTk
 
@@ -24,14 +23,11 @@ def draw_mask():
     pass
 
 
-def draw_mask():
-    pass
-
-
 class COCO:
-    def __init__(self, path):
+    def __init__(self, path, pal):
         self.imgs, self.annos, self.cates = self.parse_coco(path)
         self.cur_img = 0
+        self.pal = pal
 
     def parse_coco(self, path):
         with open(path, "r", encoding="utf-8") as f:
@@ -71,7 +67,7 @@ class COCO:
         _bbox = anno["bbox"]
         bbox = [_bbox[0], _bbox[1], _bbox[0] + _bbox[2], _bbox[1] + _bbox[3]]
         label = self.cates[anno["category_id"]]
-        color = pal.color(label)
+        color = self.pal.color(label)
         return coords, bbox, label, color
 
     def get_brief_annos(self, img_id):
@@ -186,9 +182,9 @@ class AnnoCanvas(tk.Canvas):
 
 
 class Viewer:
-    def __init__(self, parent, coco_obj: COCO):
+    def __init__(self, parent, workspace):
         self.parent = parent
-        self.coco = coco_obj
+        self.workspace = workspace
         self.zoom = 1
         self.cur_img = 0
         self.list_pw = ListPanedWindow(self.parent)
@@ -196,6 +192,9 @@ class Viewer:
         self.anno_canvas = AnnoCanvas(self.cvframe)
         self.cvframe.pack(fill=tk.X)
 
+        self.img_path = self.workspace.img
+        self.pal = palette(path=os.path.join(self.workspace.other, "colors"))
+        self.coco = COCO(os.path.join(self.workspace.anno, "geococo.json"), self.pal)
         self.img_list = self.coco.imgs
         self.anno_list = self.coco.annos
         self.list_pw.image_lb.insert(
@@ -308,7 +307,7 @@ class Viewer:
 
     def update_annos(self, aids, annos, img_id):
         # self.anno_canvas.delete(tk.ALL)
-        _path = os.path.join(img_path, self.coco.imgs[img_id][0])
+        _path = os.path.join(self.img_path, self.coco.imgs[img_id][0])
         self.anno_canvas.draw_image(_path, self.zoom)
         for aid in aids:
             coords, bbox, label, color = self.coco.get_anno_draw(img_id, aid)
@@ -340,17 +339,9 @@ class Viewer:
         self.list_pw.zoom_button.bind("<Button-1>", self.zoom_in)
 
 
-img_path = "..\\example_result\\images"
-
-
-def main():
+def make_viewer(workspace):
     root = tk.Tk()
     root.title("Ohsome2label Viewer")
-    coco_obj = COCO(r"../example_result/annotations/geococo.json")
-    viewer = Viewer(root, coco_obj)
+    viewer = Viewer(root, workspace)
     # root.resizable(False, False)
     root.mainloop()
-
-
-if __name__ == "__main__":
-    main()

@@ -9,6 +9,7 @@ from ohsome2label.overpass import overpass_download
 from ohsome2label.utils import download_osm, download_img
 from ohsome2label.logger import TqdmLoggingHandler
 from ohsome2label.visualize import visualize_combined, visualize_overlay
+from ohsome2label.viewer import make_viewer
 from ohsome2label.quality import get_osm_quality
 
 pass_config = click.make_pass_decorator(Config, ensure=True)
@@ -130,6 +131,24 @@ def quality(config):
     cfg = config.o2l_cfg
     workspace = config.workspace
     get_osm_quality(cfg, workspace)
+
+
+def main():
+    root = tk.Tk()
+    root.title("Ohsome2label Viewer")
+    coco_obj = COCO(r"../example_result/annotations/geococo.json")
+    viewer = Viewer(root, coco_obj)
+    # root.resizable(False, False)
+    root.mainloop()
+
+
+@cli.command(help="Ohsome2label Viewer")
+# @pass_config
+@click.pass_obj
+def viewer(config):
+    cfg = config.o2l_cfg
+    workspace = config.workspace
+    make_viewer(workspace)
 
 
 @cli.command(help="Print project config")
