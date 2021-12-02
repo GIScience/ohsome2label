@@ -160,7 +160,7 @@ def burn_tile(geoms, task, pal, fname, nx=256, ny=256):
 
 
 class geococo(object):
-    """ class for generate geo coco
+    """class for generate geo coco
     https://www.immersivelimit.com/tutorials/create-coco-annotations-from-scratch
     """
 
@@ -204,10 +204,13 @@ class geococo(object):
         for tag in tags:
             cat = {}
             cat["supercategory"] = tag["label"]
-            cat["id"] = _label[tag["label"]]+1
+            cat["id"] = _label[tag["label"]] + 1
             cat["name"] = tag["label"]
-            self.cats.append(cat)
-            self.catIdxs[tag["label"]] = cat["id"]
+            if cat in self.cats:
+                continue
+            else:
+                self.cats.append(cat)
+                self.catIdxs[tag["label"]] = cat["id"]
 
     def to_json(self):
         coco = {}
@@ -298,7 +301,9 @@ def gen_label(cfg, workspace):
                 fc = FeatureCollection(feats)
                 tile_name = "{0.z}.{0.x}.{0.y}".format(tile)
                 tile_path = os.path.join(tile_dir, tile_name + ".geojson")
-                img_path = os.path.join(img_dir, tile_name + ".png") # default image extension of .png
+                img_path = os.path.join(
+                    img_dir, tile_name + ".png"
+                )  # default image extension of .png
                 with open(tile_path, "w", encoding="utf-8") as gj:
                     try:
                         geojson.dump(fc, gj)
