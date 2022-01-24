@@ -10,6 +10,8 @@ By following the steps here, you would be able to install all the dependencies i
 ### Install System Level Libraries
 ``` shell
 apt-get install build-essential libsqlite3-dev zlib1g-dev
+apt-get install libgeos-dev
+apt-get install libgdal-dev
 apt-get install libgnutls28-dev
 apt-get install libcurl4-openssl-dev
 apt-get install protobuf-compiler python-pil python-lxml python-tk
