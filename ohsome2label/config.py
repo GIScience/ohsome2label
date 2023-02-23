@@ -2,7 +2,7 @@ import os
 
 from pykwalify.core import Core
 
-from ohsome2label.tile import Bbox, expand_bbox, tiles
+from ohsome2label.tile import Bbox, expand_bbox, tiles, shrink_bbox
 
 
 class ConfigFileException(Exception):
@@ -63,7 +63,7 @@ class o2l_config(Config):
         e = max(bbox[::2])
         n = max(bbox[1::2])
         s = min(bbox[1::2])
-        bbox = expand_bbox(Bbox(w, s, e, n), self.zoom)
+        bbox = shrink_bbox(Bbox(w, s, e, n), self.zoom)
         return bbox
 
     @property
@@ -157,6 +157,7 @@ class workspace(object):
         self.label = os.path.join(self.workspace, "labels")
         self.preview = os.path.join(self.workspace, "preview")
         self.raw = os.path.join(self.other, "raw")
+        self.tmp = os.path.join(self.other, "tmp")
         self.tile = os.path.join(self.other, "tile")
         self.quality = os.path.join(self.other, "quality")
         for directory in self.__dict__:
@@ -165,15 +166,15 @@ class workspace(object):
                 os.makedirs(path, exist_ok=True)
 
 
-def main():
-    from ohsome2label import tile
+# def main():
+#     from ohsome2label import tile
 
-    cfg = r"./config/config.yaml"
-    schema = r"./config/schema.yaml"
-    p = Parser(cfg, schema)
-    config = p.parse()
-    print(tile.Bbox(*config.bboxes))
+#     cfg = r"./config/config.yaml"
+#     schema = r"./config/schema.yaml"
+#     p = Parser(cfg, schema)
+#     config = p.parse()
+#     print(tile.Bbox(*config.bboxes))
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

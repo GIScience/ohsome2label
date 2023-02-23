@@ -11,12 +11,15 @@ Author: Zhaoyan Wu
 """
 import json
 import os
+import logging
 from collections import defaultdict
 
 import geojson
 import requests
 from shapely.geometry import Polygon
 from shapely.geometry.polygon import orient
+
+log = logging.getLogger("__name__")
 
 _polygon_features_file = os.path.join(
     os.path.dirname(__file__), "polygon-features.json"
@@ -58,11 +61,12 @@ def get_properties(elem, timestamp):
 
 
 def way_to_geometry(way):
+    """generate geometry from OSM way"""
     coords = [(coord["lon"], coord["lat"]) for coord in way["geometry"]]
     if coords[0] == coords[-1]:
         return geojson.Polygon([coords])
     else:
-        print("way/{} is not a polygon".format(way["id"]))
+        log.error("way/{} is not a polygon".format(way["id"]))
         return None
 
 
@@ -102,7 +106,8 @@ def rel_to_geometry(rel):
         is_polygon = False
 
         if member["type"] == "way":
-            coords = [(coord["lon"], coord["lat"]) for coord in member["geometry"]]
+            coords = [(coord["lon"], coord["lat"])
+                      for coord in member["geometry"]]
             if coords[-1] == coords[0]:
                 is_polygon = True
 
@@ -117,13 +122,14 @@ def rel_to_geometry(rel):
                 else:
                     part_inners.append(coords)
             else:
-                print("check rel/{}, member's role is ilegal".format(rel["id"]))
+                log.error(
+                    "check rel/{}, member's role is ilegal".format(rel["id"]))
                 return None
         elif member["type"] == "relation":
-            print("Not support rel member")
+            log.error("Not support rel member")
             continue
         else:
-            print("Only support way member")
+            log.error("Only support way member")
             continue
 
     part_outers = make_ring(part_outers)
@@ -132,17 +138,17 @@ def rel_to_geometry(rel):
         if part[0] == part[-1]:
             outers.append(Polygon(part))
         else:
-            print("rel/{} outer is not complete".format(rel["id"]))
+            log.error("rel/{} outer is not complete".format(rel["id"]))
             continue
 
     for part in part_inners:
         if part[0] == part[-1]:
             inners.append(Polygon(part))
         else:
-            print("member is not a polygon")
+            log.error("member is not a polygon")
 
     if len(outers) == 0:
-        print("outer is None, wrong")
+        log.error("outer is None, wrong")
         return None
 
     polys = []
@@ -286,13 +292,13 @@ class overpass(object):
         try:
             r = requests.post(self.endpoint, data=overpass_ql)
         except requests.exceptions.Timeout:
-            print(r.url)
+            log.error(r.url)
             raise Exception
 
         return r
 
 
-def overpass_download(cfg, workspace, url=""):
+def download_overpass(cfg, workspace, url=""):
     op = overpass(endpoint=url)
     op.add_settings("[out:json]")
     op.add_settings("[timeout:3600]")

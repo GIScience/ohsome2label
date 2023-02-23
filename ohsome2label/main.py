@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 from ohsome2label.config import Config, Parser, workspace
 from ohsome2label.label import gen_label
-from ohsome2label.overpass import overpass_download
+from ohsome2label.overpass import download_overpass
 from ohsome2label.utils import download_osm, download_img
 from ohsome2label.visualize import visualize_combined, visualize_overlay
 from ohsome2label.quality import get_osm_quality
@@ -53,7 +53,7 @@ def vector(config):
     if api == "ohsome":
         download_osm(cfg, workspace)
     elif api == "overpass":
-        overpass_download(cfg, workspace)
+        download_overpass(cfg, workspace)
 
 
 @cli.command(help="Generate tile")

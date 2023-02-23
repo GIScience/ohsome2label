@@ -1,11 +1,18 @@
 import os
 
 import numpy as np
+from requests import exceptions
+from requests.models import HTTPError
+from urllib3.util.retry import Retry
 import requests
 import time
-from tqdm import tqdm
+import logging
+import tqdm
 
 from ohsome2label.tile import Tile, get_xy_bbox
+
+
+log = logging.getLogger(__name__)
 
 
 class RequestError(Exception):
@@ -13,47 +20,69 @@ class RequestError(Exception):
 
 
 def get_area(x, y):
+    """Calculate the area of polygon
+
+    param x: x coordinate array of the polygon
+    param y: y coordinate array of the polygon
+    """
     return 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
 
 
-def download(fpath, api, params={}, retry=5):
+def retries_session(retries=0):
+    session = requests.Session()
+    adapter = requests.adapters.HTTPAdapter(max_retries=retries)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    return session
+
+
+def download(fpath, api, params={}, retries=0):
     """Download with url and params"""
+    session = retries_session(retries)
+    # if r.status_code == 200:
     try:
-        r = requests.get(api, params)
-        if r.status_code == 200:
+        r = session.get(url=api, params=params)
+        if not r.raise_for_status():
             with open(fpath, "wb") as f:
                 f.write(r.content)
-        elif retry > 0: 
-            retry -= 1
-            download(fpath, api, params, retry)
         else:
-            print(r.url)
-            raise RequestError("Request Error {}".format(r.status_code))
-    except requests.ConnectionError:
-        print("ERROR ConnectionError")
-        if retry > 0:
-            time.sleep(30)
-            retry -= 1
-            download(fpath, api, params, retry)
-        else:
-            print("Retry execced max time")
+            raise requests.exceptions.HTTPError
+    except requests.exceptions.HTTPError as e:
+        # log.error("Retry execced max time, please check API or try it later")
+        log.warning(
+            "Download error. %s\nPlease check your bboxes boundary or try it later" % e
+        )
+    except requests.exceptions.ConnectionError as e:
+        # log.error("ConnectionError, please check API")
+        log.warning("Connection error. %s" % e)
 
 
 def download_osm(cfg, workspace):
+    """Download osm according to config
+
+    param cfg: config from config.yaml
+    param workspace: workspace to store osm data
+    """
     url = cfg.url
     params = {
         "bboxes": "{},{},{},{}".format(*cfg.bboxes),
         "time": cfg.timestamp,
-        "types": cfg.types,
+        # "types": cfg.types,
         "properties": cfg.properties,
     }
     tgt_dir = workspace.raw
-    for tag in tqdm(cfg.tags):
+    for tag in tqdm.tqdm(cfg.tags):
         fname = "{label}_{k}_{v}.geojson".format(
             label=tag["label"], k=tag["key"], v=tag["value"]
         )
-        params["keys"] = tag["key"]
-        params["values"] = tag["value"]
+        # params["keys"] = tag["key"]
+        # params["values"] = tag["value"]
+        if tag["value"] != '':
+            params["filter"] = "{}={} and geometry:{}".format(
+                tag["key"], tag["value"], cfg.types)
+        else:
+            params["filter"] = "{}=* and geometry:{}".format(
+                tag["key"], cfg.types)
         fpath = os.path.join(tgt_dir, fname)
         download(fpath, url, params)
 
@@ -71,15 +100,17 @@ def download_img(cfg, workspace):
     For custom, only support x,y,z and token in img_url
 
 
-    Args:
-        cfg (ohsome2label.config.o2l_config): o2l_config
-        workspace (ohsome2label.config.workspace): workspace
+    param cfg: ohsome2label.config.o2l_config
+    param workspace: ohsome2label.config.workspace
     """
-    tgt_dir = workspace.img
-    tiles = os.listdir(workspace.label)
+    tgt_dir = workspace.tmp
+    tile_list = os.path.join(workspace.other, "tile_list")
+    tiles = []
+    with open(tile_list, "r") as tl:
+        tiles = [_.replace("\n", "") for _ in tl]
     api = cfg.img_api.lower()
-    for tile in tqdm(tiles):
-        z, x, y = tile.split(".")[0:3]
+    for tile in tqdm.tqdm(tiles):
+        z, x, y = [int(_) for _ in tile.split(".")]
         tile = Tile(x, y, z)
         baseURL = cfg.img_url
         if api == "mapbox":
@@ -92,7 +123,8 @@ def download_img(cfg, workspace):
             url = baseURL.format(q=quadkey, token=cfg.token)
         elif api == "custom":
             if "token" in baseURL:
-                url = baseURL.format(x=tile.x, y=tile.y, z=tile.z, token=cfg.token)
+                url = baseURL.format(x=tile.x, y=tile.y,
+                                     z=tile.z, token=cfg.token)
             else:
                 url = baseURL.format(x=tile.x, y=tile.y, z=tile.z)
 
@@ -109,7 +141,12 @@ def valid_coco():
 
 
 def tile_coords_and_zoom_to_quadKey(x, y, zoom):
-    """Create a quadkey for use with certain tileservers that use them."""
+    """Create a quadkey for use with certain tileservers that use them.
+
+    param x: x index
+    param y: y index
+    param zoom: zoom level
+    """
     quadKey = ""
     for i in range(zoom, 0, -1):
         digit = 0

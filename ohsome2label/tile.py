@@ -19,7 +19,8 @@ from collections import namedtuple
 ELLIPSOID = 6378137.0
 XMAX = YMAX = math.pi * ELLIPSOID
 XMIN = YMIN = -XMAX
-LATMAX = math.degrees(2 * math.atan(math.exp(YMAX / ELLIPSOID)) - 0.5 * math.pi)
+LATMAX = math.degrees(
+    2 * math.atan(math.exp(YMAX / ELLIPSOID)) - 0.5 * math.pi)
 LATMIN = -LATMAX
 
 
@@ -81,7 +82,8 @@ def xy(lon, lat):
     """
     lon, lat = truncate(lon, lat)
     x = ELLIPSOID * math.radians(lon)
-    y = ELLIPSOID * math.log(math.tan((0.25 * math.pi) + (0.5 * math.radians(lat))))
+    y = ELLIPSOID * \
+        math.log(math.tan((0.25 * math.pi) + (0.5 * math.radians(lat))))
     return x, y
 
 
@@ -241,6 +243,22 @@ def expand_bbox(bbox, zoom):
     return Bbox(west, south, east, north)
 
 
+def shrink_bbox(bbox, zoom):
+    """Expand bounding box cover all related tile in lnglat
+
+    :param bbox: bounding box
+    :param zoom: zoom level
+    :return: expanded bounding box
+    """
+    #west, north = west_north(lnglat_to_tile(bbox.west, bbox.north, zoom))
+    #_ = lnglat_to_tile(bbox.east, bbox.south, zoom)
+    #east, south = west_north(Tile(_.x + 1, _.y + 1, _.z))
+    _ = lnglat_to_tile(bbox.west, bbox.north, zoom)
+    east, south = west_north(lnglat_to_tile(bbox.east, bbox.south, zoom))
+    west, north = west_north(Tile(_.x + 2, _.y + 1, _.z))
+    return Bbox(west, south, east, north)
+
+
 def tile_get_transform(tile, nx=256, ny=256):
     """Calculate geoTransform for rasterizing the tile
 
@@ -258,7 +276,7 @@ def tile_get_transform(tile, nx=256, ny=256):
 def bbox_get_transform(bbox, nx=256, ny=256):
     """Calculate geoTransform for bbox
 
-    :param bbox: bounding box 
+    :param bbox: bounding box
     :param nx: tile width pixel size
     :param ny: tile height pixel size
     """
@@ -269,6 +287,13 @@ def bbox_get_transform(bbox, nx=256, ny=256):
 
 
 def apply_transform(coords, trans):
-    """transform coordinates according"""
-    coords = [((x - trans[0]) / trans[1], (y - trans[3]) / trans[5]) for x, y in coords]
+    """transform coordinates according transformation matrix to get image-based
+    local coordinate
+
+    :param coords: coordinates
+    :param trans: translation to get image-based coordinate system coordinate
+
+    """
+    coords = [((x - trans[0]) / trans[1], (y - trans[3]) / trans[5])
+              for x, y in coords]
     return coords
